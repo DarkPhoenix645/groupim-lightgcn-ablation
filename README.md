@@ -1,4 +1,4 @@
-# groupim-lightgnc-ablation
+# groupim-lightgcn-ablation
 
 GroupIM with a LightGCN user encoder: full ablation across Weeplaces, Yelp, Gowalla, and Douban.
 
@@ -6,13 +6,13 @@ Baseline code is the authors' [CrowdDynamicsLab/GroupIM](https://github.com/Crow
 
 Papers: `papers/groupim.pdf`, `papers/lightgcn.pdf`.
 
-Plan, CSV contract, experiment protocol, ADRs: [`docs/`](docs/README.md). Language: [`GLOSSARY.md`](GLOSSARY.md). Tickets: [GitHub Issues](https://github.com/DarkPhoenix645/groupim-lightgnc-ablation/issues).
+Plan, CSV contract, experiment protocol, ADRs: [`docs/`](docs/README.md). Language: [`GLOSSARY.md`](GLOSSARY.md). Tickets: [GitHub Issues](https://github.com/DarkPhoenix645/groupim-lightgcn-ablation/issues).
 
 ## Setup
 
 ```bash
 uv sync
-uv run groupim-lightgnc-ablation
+uv run groupim-lightgcn-ablation
 ```
 
 GPU: one RTX 4080. Use `uv add` / `uv run`; do not pip-install into a random venv.

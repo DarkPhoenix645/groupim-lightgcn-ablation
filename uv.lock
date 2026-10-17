@@ -12,7 +12,7 @@ wheels = [
 ]
 
 [[package]]
-name = "groupim-lightgnc-ablation"
+name = "groupim-lightgcn-ablation"
 version = "0.1.0"
 source = { editable = "." }
 

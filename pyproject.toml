@@ -1,12 +1,12 @@
 [project]
-name = "groupim-lightgnc-ablation"
+name = "groupim-lightgcn-ablation"
 version = "0.1.0"
 description = "GroupIM + LightGCN ablation: all four datasets, full ablation on one RTX 4080"
 requires-python = ">=3.12"
 dependencies = []
 
 [project.scripts]
-groupim-lightgnc-ablation = "groupim_lightgnc_ablation:main"
+groupim-lightgcn-ablation = "groupim_lightgcn_ablation:main"
 
 [dependency-groups]
 dev = ["pytest>=8", "ruff>=0.13"]
