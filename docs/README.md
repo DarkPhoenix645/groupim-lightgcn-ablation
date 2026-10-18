@@ -5,6 +5,8 @@
 | [GLOSSARY.md](../GLOSSARY.md) | Canonical language |
 | [scope.md](scope.md) | 1-week plan and GitHub issue map |
 | [data-contract.md](data-contract.md) | Author CSV files and split rules |
+| [table1-comparison.md](table1-comparison.md) | Paper Table 1 next to the CSV counts |
+| [dataset-notes/](dataset-notes/) | Per-dataset source and Table 1 gaps for Yelp, Gowalla, and Douban |
 | [experiments.md](experiments.md) | Run config, concurrency, artifacts |
 | [adr/](adr/) | Decisions |
 | [agents/](agents/) | Issue tracker + how skills consume domain docs |
