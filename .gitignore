@@ -222,7 +222,8 @@ __marimo__/
 
 # Experiment artifacts
 .scratch/
-data/
+data/*
+!data/weeplaces/
 results/
 *.pt
 tmp
