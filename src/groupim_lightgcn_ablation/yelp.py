@@ -33,6 +33,7 @@ import pandas as pd
 
 from groupim_lightgcn_ablation.csv_contract import (
     PAPER_TABLE1,
+    _format_stat,
     dataset_statistics,
     emit_author_csvs,
     write_table1_report,
@@ -42,6 +43,8 @@ BUSINESS_FILE = "yelp_academic_dataset_business.json"
 REVIEW_FILE = "yelp_academic_dataset_review.json"
 USER_FILE = "yelp_academic_dataset_user.json"
 RAW_FILES = (BUSINESS_FILE, REVIEW_FILE, USER_FILE)
+BENCHMARK_FILES = ("user_events.dat", "groupid_users.dat", "groupid_events.dat")
+BENCHMARK_DIR = Path("data/raw/douban/yelp_la")
 
 WINDOW_15_MIN = "15 minutes"
 WINDOW_SAME_DAY = "same calendar day"
@@ -220,8 +223,161 @@ def group_interactions(
     )
 
 
+@dataclass(frozen=True)
+class YelpBenchmarkSummary:
+    users: int
+    items: int
+    groups: int
+    visits: int
+    source_users: int
+    source_events: int
+    source_groups: int
+    source_group_rows: int
+    min_count: int
+
+
+def convert_yelp_benchmark(
+    raw_dir: Path,
+    out_dir: Path,
+    *,
+    min_count: int = MIN_COUNT,
+) -> YelpBenchmarkSummary:
+    """Read Yin et al.'s Yelp-LA release and write the nine author CSVs.
+
+    Groups are already built and the files have no timestamps, so the 15-minute
+    window is not applied again. Users and businesses with fewer than
+    ``min_count`` distinct partners are dropped.
+    """
+    user_item, group_item, group_user, meta = released_group_frames(raw_dir, min_count)
+    emit_author_csvs(user_item, group_item, group_user, out_dir)
+    return YelpBenchmarkSummary(
+        users=int(user_item["user"].nunique()),
+        items=int(user_item["item"].nunique()),
+        groups=int(group_item["group"].nunique()),
+        visits=len(user_item),
+        source_users=meta["source_users"],
+        source_events=meta["source_events"],
+        source_groups=meta["source_groups"],
+        source_group_rows=meta["source_group_rows"],
+        min_count=min_count,
+    )
+
+
+def released_group_frames(
+    raw_dir: Path,
+    min_count: int,
+) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, dict[str, int]]:
+    """User-item, group-item, and group-user tables from a Yin ``.dat`` release."""
+    missing = [name for name in BENCHMARK_FILES if not (raw_dir / name).is_file()]
+    if missing:
+        raise FileNotFoundError(f"missing {missing} under {raw_dir}")
+    user_events, _user_rows = read_id_lists(raw_dir / BENCHMARK_FILES[0])
+    group_users, group_rows = read_id_lists(raw_dir / BENCHMARK_FILES[1])
+    group_events, _event_rows = read_id_lists(raw_dir / BENCHMARK_FILES[2])
+    visits = [
+        Visit(user, event, datetime(1970, 1, 1))
+        for user, events in user_events.items()
+        for event in events
+    ]
+    kept = filter_visits(visits, min_count)
+    if not kept:
+        raise ValueError(f"no attendance left after the {min_count}+ filter")
+    by_user: dict[str, set[str]] = {}
+    for visit in kept:
+        by_user.setdefault(visit.user, set()).add(visit.item)
+
+    group_item_rows: list[tuple[str, str]] = []
+    group_user_rows: list[tuple[str, str]] = []
+    for group, members in group_users.items():
+        people = [member for member in members if member in by_user]
+        if len(people) < 2:
+            continue
+        attended: set[str] = set()
+        for member in people:
+            attended.update(by_user[member])
+        events = [event for event in group_events.get(group, []) if event in attended]
+        if not events:
+            continue
+        for event in events:
+            group_item_rows.append((group, event))
+        for member in people:
+            group_user_rows.append((group, member))
+    if not group_item_rows:
+        raise ValueError("no released groups survived the filter")
+    user_item = pd.DataFrame([(visit.user, visit.item) for visit in kept], columns=["user", "item"])
+    return (
+        user_item,
+        pd.DataFrame(group_item_rows, columns=["group", "item"]),
+        pd.DataFrame(group_user_rows, columns=["group", "user"]),
+        {
+            "source_users": len(user_events),
+            "source_events": len({event for events in user_events.values() for event in events}),
+            "source_groups": len(group_users),
+            "source_group_rows": group_rows,
+        },
+    )
+
+
+def read_id_lists(path: Path) -> tuple[dict[str, list[str]], int]:
+    """Map the left-hand id to the comma-separated ids on the right.
+
+    Repeated ids keep one entry. Membership lists that differ only by order
+    collapse to the same set.
+    """
+    rows: dict[str, list[str]] = {}
+    n_rows = 0
+    with path.open(encoding="utf-8") as handle:
+        for line in handle:
+            text = line.strip()
+            if not text:
+                continue
+            n_rows += 1
+            left, _, right = text.partition("\t")
+            values = rows.setdefault(left, [])
+            for part in right.split(","):
+                part = part.strip()
+                if part and part not in values:
+                    values.append(part)
+    if not rows:
+        raise ValueError(f"{path} has no rows")
+    return rows, n_rows
+
+
+def yelp_benchmark_note(summary: YelpBenchmarkSummary, stats: dict[str, float]) -> str:
+    """Table 1 note for the Yin Yelp-LA release."""
+    paper = PAPER_TABLE1["yelp"]
+    repeated = ""
+    if summary.source_group_rows != summary.source_groups:
+        repeated = f" ({summary.source_group_rows:,} lines; repeated ids have the same members)"
+    lines = [
+        "## Yelp",
+        "",
+        "Source: Yelp-LA benchmark, Yin et al. ICDE 2019, from Hongzhi Yin's dataset page.",
+        "The Yelp Open Dataset has no Los Angeles restaurants, so it is not the source.",
+        "Groups in this release are already built, and the files have no timestamps,",
+        "so the 15-minute window was not applied again.",
+        f"Users and businesses with fewer than {summary.min_count} distinct partners are dropped.",
+        (
+            f"Benchmark before the filter: {summary.source_users:,} users, "
+            f"{summary.source_events:,} businesses, {summary.source_groups:,} groups{repeated}."
+        ),
+        f"Distinct visits after the filter: {summary.visits:,}.",
+        "",
+        "| Field | Paper | Computed | Delta |",
+        "| --- | ---: | ---: | ---: |",
+    ]
+    for field, paper_value in paper.items():
+        computed = stats[field]
+        lines.append(
+            f"| {field} | {_format_stat(paper_value)} | {_format_stat(computed)} | "
+            f"{_format_stat(computed - paper_value)} |"
+        )
+    lines.append("")
+    return "\n".join(lines)
+
+
 def yelp_deviation_note(summary: YelpSummary, stats: dict[str, float]) -> str:
-    """Text appended to the Table 1 comparison after a Yelp conversion."""
+    """Text appended to the Table 1 comparison after a Yelp JSON conversion."""
     paper = PAPER_TABLE1["yelp"]
     lines = [
         "## Yelp",
@@ -240,7 +396,8 @@ def yelp_deviation_note(summary: YelpSummary, stats: dict[str, float]) -> str:
     for field, paper_value in paper.items():
         computed = stats[field]
         lines.append(
-            f"| {field} | {paper_value:,.4g} | {computed:,.4g} | {computed - paper_value:,.4g} |"
+            f"| {field} | {_format_stat(paper_value)} | {_format_stat(computed)} | "
+            f"{_format_stat(computed - paper_value)} |"
         )
     if summary.window == WINDOW_SAME_DAY:
         lines.extend(
@@ -260,26 +417,46 @@ def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(
         description="Convert Yelp Los Angeles restaurants to author CSVs"
     )
-    parser.add_argument("--raw", type=Path, default=Path("data/raw/yelp"))
+    parser.add_argument("--raw", type=Path, default=None)
     parser.add_argument("--out", type=Path, default=Path("data/yelp"))
     parser.add_argument("--notes", type=Path, default=Path("docs/dataset-notes/yelp.md"))
     parser.add_argument("--table1", type=Path, default=Path("docs/table1-comparison.md"))
     args = parser.parse_args(argv)
+    raw = args.raw if args.raw is not None else _default_raw()
     try:
-        summary = convert_yelp(args.raw, args.out)
+        if _is_benchmark(raw):
+            summary = convert_yelp_benchmark(raw, args.out)
+        else:
+            summary = convert_yelp(raw, args.out)
     except FileNotFoundError as exc:
         raise SystemExit(
-            f"{exc}. Download the Yelp Open Dataset and place {', '.join(RAW_FILES)} in {args.raw}."
+            f"{exc}. Place Yin Yelp-LA .dat files in {BENCHMARK_DIR}, or download the "
+            f"Yelp Open Dataset and place {', '.join(RAW_FILES)} in data/raw/yelp."
         ) from exc
     stats = dataset_statistics(args.out)
+    note = (
+        yelp_benchmark_note(summary, stats)
+        if isinstance(summary, YelpBenchmarkSummary)
+        else yelp_deviation_note(summary, stats)
+    )
     args.notes.parent.mkdir(parents=True, exist_ok=True)
-    args.notes.write_text(yelp_deviation_note(summary, stats), encoding="utf-8")
+    args.notes.write_text(note, encoding="utf-8")
     write_table1_report(args.out.parent, args.table1, notes_dir=args.notes.parent)
     print(
         f"wrote {args.out} ({summary.users:,} users, {summary.items:,} items, "
-        f"{summary.groups:,} groups, window: {summary.window})",
+        f"{summary.groups:,} groups)",
         flush=True,
     )
+
+
+def _default_raw() -> Path:
+    if _is_benchmark(BENCHMARK_DIR):
+        return BENCHMARK_DIR
+    return Path("data/raw/yelp")
+
+
+def _is_benchmark(raw: Path) -> bool:
+    return all((raw / name).is_file() for name in BENCHMARK_FILES)
 
 
 def _is_la_restaurant(business: dict) -> bool:

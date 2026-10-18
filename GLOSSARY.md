@@ -56,7 +56,7 @@ Neural group recommendation: predict items a **group** of **users** will like, u
 | Term | Definition | Avoid |
 | --- | --- | --- |
 | **Weeplaces** | POI check-in dataset shipped with the author GroupIM repo; the format reference and the MLP baseline dataset. | |
-| **Yelp** | Los Angeles restaurant reviews converted into the author CSV contract. The public dump has no Los Angeles restaurants, so those CSVs are not written. | |
+| **Yelp** | Los Angeles restaurants from the Yin et al. ICDE 2019 Yelp-LA benchmark. Groups are prebuilt, so the 15-minute window is not reapplied. Users and businesses with fewer than 5 distinct partners are dropped. | |
 | **Gowalla** | US Food check-ins through June 2011 plus the friend graph. A group is one 15-minute outing of a user and friends at one restaurant. Users and places with fewer than 5 distinct partners are dropped. | |
 | **Douban** | Co-attendance from the Yin et al. ICDE 2019 Douban-Event benchmark. The released item is an event. Users and events with fewer than 10 distinct partners are dropped. | |
 | **Table 1** | The GroupIM paper's dataset statistics (users, items, groups, interactions, average group size). Conversions are judged against this table. | |

@@ -234,3 +234,64 @@ def test_clock_time_selects_the_fifteen_minute_window(tmp_path: Path) -> None:
 def test_main_asks_for_the_download_when_raw_files_are_missing(tmp_path: Path) -> None:
     with pytest.raises(SystemExit, match="Yelp Open Dataset"):
         main(["--raw", str(tmp_path / "missing"), "--out", str(tmp_path / "out")])
+
+
+def test_benchmark_keeps_groups_after_the_five_filter(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    raw = tmp_path / "yelp_la"
+    raw.mkdir()
+    users = [str(index) for index in range(24)]
+    events = [str(index) for index in range(6)]
+    (raw / "user_events.dat").write_text(
+        "\n".join(f"{user}\t{','.join(events)}" for user in users)
+        + "\nsparse\t0,1\n0\t0,1,rare\n1\t0,1,rare\n",
+        encoding="utf-8",
+    )
+    (raw / "groupid_users.dat").write_text(
+        "\n".join(f"{index}\t{index % 24},{(index + 1) % 24}" for index in range(24))
+        + "\nlonely\tsparse,0\nrare-only\t0,1\n",
+        encoding="utf-8",
+    )
+    (raw / "groupid_events.dat").write_text(
+        "\n".join(f"{index}\t0" for index in range(24)) + "\nlonely\t0\nrare-only\trare\n",
+        encoding="utf-8",
+    )
+    out = ROOT / "data" / "_yelp_benchmark_smoke"
+    notes = tmp_path / "notes"
+    table1 = tmp_path / "table1.md"
+    monkeypatch.chdir(ROOT)
+    try:
+        main(
+            [
+                "--raw",
+                str(raw),
+                "--out",
+                str(out),
+                "--notes",
+                str(notes / "yelp.md"),
+                "--table1",
+                str(table1),
+            ]
+        )
+        frames = read_author_csvs(out)
+        assert layout_errors(frames) == []
+        users = set()
+        for name in (
+            "train_ui.csv",
+            "val_ui_tr.csv",
+            "val_ui_te.csv",
+            "test_ui_tr.csv",
+            "test_ui_te.csv",
+        ):
+            users.update(frames[name]["user"])
+        assert len(users) == 24
+        note = (notes / "yelp.md").read_text(encoding="utf-8")
+        assert "15-minute window was not applied again" in note
+        assert "Yin" in note
+        assert_loaders("_yelp_benchmark_smoke", negs_per_group=5)
+    finally:
+        if out.exists():
+            for path in out.glob("*"):
+                path.unlink()
+            out.rmdir()

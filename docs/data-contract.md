@@ -31,7 +31,7 @@ Measured on `data/weeplaces/` and reproduced by `groupim_lightgcn_ablation.csv_c
 | Dataset | Construction | On this branch |
 | --- | --- | --- |
 | Weeplaces | Author files under `data/weeplaces/`. Format reference. Not rebuilt. | Nine CSVs present. |
-| Yelp | Los Angeles restaurants. Group = a user and friends at that restaurant in a 15-minute window, or the same calendar day when the review has no clock. Keep users/restaurants with 5+ distinct partners. | Converter is in place. The public dump has no Los Angeles restaurants, so `data/yelp/` is not written. [yelp.md](dataset-notes/yelp.md). |
+| Yelp | Los Angeles restaurants. The public Open Dataset has none, so the source is Yin et al.'s Yelp-LA benchmark: prebuilt groups, no timestamps. Keep users/businesses with 5+ distinct partners. | Nine CSVs in `data/yelp/`. [yelp.md](dataset-notes/yelp.md). |
 | Gowalla | Restaurant check-ins through June 2011 plus the friend graph. Group = one user and friends at the same place within 15 minutes. A later outing is another group. Keep users/places with 5+ distinct partners. | Nine CSVs in `data/gowalla/`. [gowalla.md](dataset-notes/gowalla.md). |
 | Douban | Co-attendance groups. Keep users and items with 10+ distinct partners. | Nine CSVs in `data/douban/`. The public benchmark's item is the event, not a venue. [douban.md](dataset-notes/douban.md). |
 

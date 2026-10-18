@@ -4,7 +4,7 @@ Canonical plan. GitHub Issues are the tracker (ADR-0006). The HTML in `.scratch/
 
 **Hardware:** one RTX 4080. **Budget:** ~450 runs, 80–120 GPU hours; 2–3 concurrent jobs ≈ 30–40h wall-clock. Queue the grid by day 3; leave it overnight.
 
-**Critical path:** Yelp, Gowalla, Douban in the [CSV contract](data-contract.md). Gowalla and Douban CSVs are in `data/`. The Yelp converter is in place; the public dump has no Los Angeles restaurants, so `data/yelp/` is empty. Counts and gaps: [table1-comparison.md](table1-comparison.md).
+**Critical path:** Yelp, Gowalla, Douban in the [CSV contract](data-contract.md). All three have author CSVs in `data/`. Yelp uses the Yin LA benchmark because the public dump has no Los Angeles restaurants. Counts and gaps: [table1-comparison.md](table1-comparison.md).
 
 **Gates**
 

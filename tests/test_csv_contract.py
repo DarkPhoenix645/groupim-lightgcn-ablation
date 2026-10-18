@@ -201,8 +201,7 @@ def test_table1_report_records_weeplaces_and_leaves_the_others(tmp_path: Path) -
     text = render_table1_report(DATA)
     assert "1,358,458" in text
     assert "508,485" in text
-    assert "| yelp | status |  | not converted |  |" in text
-    for dataset in ("gowalla", "douban"):
+    for dataset in ("yelp", "gowalla", "douban"):
         status = f"| {dataset} | status |  | not converted |  |"
         if (DATA / dataset / "train_ui.csv").is_file():
             assert status not in text

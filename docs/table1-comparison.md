@@ -9,8 +9,8 @@ The printed Weeplaces user-item total (1,358,458) and group-item total (180,229)
 match the printed averages or the released CSVs. The averages do: about 58.83 items per
 user and 2.95 items per group. Weeplaces is not rebuilt.
 
-Gowalla and Douban are read from their nine CSVs when those files exist.
-Yelp stays unconverted while the public dump has no Los Angeles restaurants.
+A dataset row is filled from data/<name>/ when its nine CSVs exist.
+A dataset without those files stays not converted.
 Per-dataset notes live in docs/dataset-notes/.
 
 | Dataset | Field | Paper | Computed | Delta |
@@ -23,7 +23,14 @@ Per-dataset notes live in docs/dataset-notes/.
 | weeplaces | items_per_user | 58.8300 | 58.8320 | 0.0020 |
 | weeplaces | items_per_group | 2.9500 | 2.9530 | 0.0030 |
 | weeplaces | group_size | 2.9000 | 2.8887 | -0.0113 |
-| yelp | status |  | not converted |  |
+| yelp | users | 7,037 | 18,911 | 11,874 |
+| yelp | items | 7,671 | 11,126 | 3,455 |
+| yelp | groups | 10,214 | 14,396 | 4,182 |
+| yelp | user_item | 220,091 | 424,774 | 204,683 |
+| yelp | group_item | 11,160 | 16,433 | 5,273 |
+| yelp | items_per_user | 31.3000 | 22.4617 | -8.8383 |
+| yelp | items_per_group | 1.0900 | 1.1415 | 0.0515 |
+| yelp | group_size | 6.8000 | 5.7919 | -1.0081 |
 | gowalla | users | 25,405 | 64,002 | 38,597 |
 | gowalla | items | 38,306 | 160,171 | 121,865 |
 | gowalla | groups | 44,565 | 225,657 | 181,092 |
@@ -86,6 +93,21 @@ Each group is one 15-minute outing at one restaurant, so items per group is 1. T
 
 ## Yelp
 
-The converter is `python -m groupim_lightgcn_ablation.yelp`. It keeps California businesses whose city is Los Angeles and whose category token is exactly `Restaurants`, then builds groups from a user and friends at that restaurant. A review timestamp with a clock uses a 15-minute window. A date with no clock uses the calendar day. Users and restaurants with fewer than 5 distinct partners are dropped.
+Source: Yelp-LA benchmark, Yin et al. ICDE 2019, from Hongzhi Yin's dataset page.
+The Yelp Open Dataset has no Los Angeles restaurants, so it is not the source.
+Groups in this release are already built, and the files have no timestamps,
+so the 15-minute window was not applied again.
+Users and businesses with fewer than 5 distinct partners are dropped.
+Benchmark before the filter: 34,504 users, 22,611 businesses, 24,103 groups.
+Distinct visits after the filter: 424,774.
 
-The Yelp Open Dataset in `data/raw/yelp/` returns 0 Los Angeles restaurants, so `data/yelp/` has no author CSVs. Yelp stays in the study. Another city in that dump is not a substitute.
+| Field | Paper | Computed | Delta |
+| --- | ---: | ---: | ---: |
+| users | 7,037 | 18,911 | 11,874 |
+| items | 7,671 | 11,126 | 3,455 |
+| groups | 10,214 | 14,396 | 4,182 |
+| user_item | 220,091 | 424,774 | 204,683 |
+| group_item | 11,160 | 16,433 | 5,273 |
+| items_per_user | 31.3000 | 22.4617 | -8.8383 |
+| items_per_group | 1.0900 | 1.1415 | 0.0515 |
+| group_size | 6.8000 | 5.7919 | -1.0081 |
