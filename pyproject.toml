@@ -3,13 +3,27 @@ name = "groupim-lightgcn-ablation"
 version = "0.1.0"
 description = "GroupIM + LightGCN ablation: all four datasets, full ablation on one RTX 4080"
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+    "numpy>=2.5.4",
+    "pandas>=3.0.6",
+    "scikit-learn>=1.9.1",
+    "scipy>=1.18.1",
+    "torch>=2.11.0",
+]
 
 [project.scripts]
 groupim-lightgcn-ablation = "groupim_lightgcn_ablation:main"
 
 [dependency-groups]
 dev = ["pytest>=8", "ruff>=0.13"]
+
+[tool.uv.sources]
+torch = { index = "pytorch-cu128" }
+
+[[tool.uv.index]]
+name = "pytorch-cu128"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true
 
 [build-system]
 requires = ["uv_build>=0.13.1,<0.14.0"]
