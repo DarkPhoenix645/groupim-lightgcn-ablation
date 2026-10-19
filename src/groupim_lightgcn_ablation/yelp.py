@@ -362,6 +362,7 @@ def yelp_benchmark_note(summary: YelpBenchmarkSummary, stats: dict[str, float]) 
             f"{summary.source_events:,} businesses, {summary.source_groups:,} groups{repeated}."
         ),
         f"Distinct visits after the filter: {summary.visits:,}.",
+        "These metrics are on the Yin-LA variant, not the paper's Yelp benchmark.",
         "",
         "| Field | Paper | Computed | Delta |",
         "| --- | ---: | ---: | ---: |",

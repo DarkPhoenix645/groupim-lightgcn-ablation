@@ -289,6 +289,7 @@ def test_benchmark_keeps_groups_after_the_five_filter(
         note = (notes / "yelp.md").read_text(encoding="utf-8")
         assert "15-minute window was not applied again" in note
         assert "Yin" in note
+        assert "These metrics are on the Yin-LA variant, not the paper's Yelp benchmark." in note
         assert_loaders("_yelp_benchmark_smoke", negs_per_group=5)
     finally:
         if out.exists():
