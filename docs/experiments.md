@@ -10,7 +10,7 @@ One config → exactly one results-CSV row. Same config+seed must be detectably 
 
 ## Concurrency
 
-2–3 jobs on the single RTX 4080. Outputs must not clobber.
+2–3 jobs on the single RTX 3080 (10 GB). Outputs must not clobber.
 
 ## Artifacts every run writes
 

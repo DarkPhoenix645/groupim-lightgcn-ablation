@@ -224,6 +224,9 @@ __marimo__/
 .scratch/
 data/*
 !data/weeplaces/
+!data/yelp/
+!data/gowalla/
+!data/douban/
 results/
 *.pt
 tmp

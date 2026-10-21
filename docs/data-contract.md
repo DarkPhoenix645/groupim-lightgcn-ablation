@@ -6,7 +6,7 @@ Each line of an interaction file is a `(id, id)` pair. `group_users.csv` is `(gr
 
 | File | Role |
 | --- | --- |
-| `train_ui.csv` | Training user-item interactions. **All** individual interactions go here, including for users who appear in val/test groups. |
+| `train_ui.csv` | Every interaction of the training users (70% of users). A training user who is also a member of a validation or test group keeps those interactions here. |
 | `val_ui_tr.csv` | Fold-in user-item interactions for validation users. |
 | `val_ui_te.csv` | Held-out user-item interactions for validation (user-level eval). |
 | `test_ui_tr.csv` | Fold-in user-item interactions for test users. |
@@ -18,17 +18,21 @@ Each line of an interaction file is a `(id, id)` pair. `group_users.csv` is `(gr
 
 ## Splits
 
-- Partition **groups** 70 / 10 / 20 train / val / test.
-- Val and test groups are **ephemeral**: that member combination is absent from training.
-- User-item interactions of all users train the user encoder; they are not held out with the group split.
+Measured on `data/weeplaces/` and reproduced by `groupim_lightgcn_ablation.csv_contract.emit_author_csvs` (seed 1111):
+
+- Partition **groups** 70 / 10 / 20. Sizes are `round_half_up(0.7 n)`, `round_half_up(0.1 n)`, and the remainder. Group ids are one contiguous range: train, then validation, then test.
+- Validation and test groups are **ephemeral**: that member combination is absent from training. Groups that share a member combination stay in the same split. Larger combinations are placed first so the whole set still fits one side of the 70/10/20 cut. The released Weeplaces files leak a few combinations; new datasets must not.
+- Partition **users** the same 70 / 10 / 20 way, into disjoint contiguous id blocks in the same order. This is the author file layout. `train_ui` is not a copy of the validation and test histories.
+- Each validation or test user holds out `ceil(0.4 n)` items (`n = 1` holds out the only item). The rest are fold-in. Held-out pairs are not written into `train_ui`. On Weeplaces this matches about 93% of evaluation users; the other long-history users differ by one item.
+- The group loader trains on `train_ui` plus the two fold-in files. That is the file layout behind the paper's "individual interactions of all users are used for training." Held-out user items stay ranking targets.
 
 ## Dataset construction (paper §5.1)
 
-| Dataset | Construction |
-| --- | --- |
-| Weeplaces | Author files under `data/weeplaces/` in CrowdDynamicsLab/GroupIM. Format reference. |
-| Yelp | Los Angeles restaurants. Convert to the files above. |
-| Gowalla | Restaurant check-ins to June 2011 + friend graph. Group = same POI within 15 minutes, user + friends. Keep users/items with 5+ check-ins. |
-| Douban | Event-venue. Keep users/venues with 10+ interactions. Group = users attending an event together. |
+| Dataset | Construction | On this branch |
+| --- | --- | --- |
+| Weeplaces | Author files under `data/weeplaces/`. Format reference. Not rebuilt. | Nine CSVs present. |
+| Yelp | Los Angeles restaurants. The public Open Dataset has none, so the source is Yin et al.'s Yelp-LA benchmark: prebuilt groups, no timestamps. Keep users/businesses with 5+ distinct partners. | Nine CSVs in `data/yelp/`. [yelp.md](dataset-notes/yelp.md). |
+| Gowalla | Restaurant check-ins through June 2011 plus the friend graph. Group = one user and friends at the same place within 15 minutes. A later outing is another group. Keep users/places with 5+ distinct partners. | Nine CSVs in `data/gowalla/`. [gowalla.md](dataset-notes/gowalla.md). |
+| Douban | Co-attendance groups. Keep users and items with 10+ distinct partners. | Nine CSVs in `data/douban/`. The public benchmark's item is the event, not a venue. [douban.md](dataset-notes/douban.md). |
 
-If counts diverge from paper Table 1, rebuild with §5.1 and write the deviation down. Do not drop the dataset (ADR-0005).
+Counts that miss Table 1 are recorded in [table1-comparison.md](table1-comparison.md). Weeplaces is the reproduction baseline. Yelp, Gowalla, and Douban are reconstructed variants and are not dropped (ADR-0008).

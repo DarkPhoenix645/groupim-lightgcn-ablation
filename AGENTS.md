@@ -6,7 +6,7 @@ Read before exploring: `GLOSSARY.md`, `docs/adr/` for the area you are touching,
 
 Baseline to port: [CrowdDynamicsLab/GroupIM](https://github.com/CrowdDynamicsLab/GroupIM) (ADR-0001). LightGCN is an encoder swap only (ADR-0004).
 
-Target hardware: one RTX 4080. Paper PDFs live in `papers/`. Work tracker: GitHub Issues via `gh`.
+Target hardware: one RTX 3080 (10 GB). Paper PDFs live in `papers/`. Work tracker: GitHub Issues via `gh`.
 
 ## Agent skills
 

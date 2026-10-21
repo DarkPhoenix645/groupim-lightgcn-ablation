@@ -15,4 +15,4 @@ uv sync
 uv run groupim-lightgcn-ablation
 ```
 
-GPU: one RTX 4080. Use `uv add` / `uv run`; do not pip-install into a random venv.
+GPU: one RTX 3080 (10 GB). Use `uv add` / `uv run`; do not pip-install into a random venv.
