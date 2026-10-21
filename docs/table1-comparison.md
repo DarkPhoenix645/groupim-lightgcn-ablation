@@ -2,7 +2,7 @@
 
 Paper counts are GroupIM Table 1. Computed counts read the nine author CSVs:
 distinct users, distinct items, distinct groups, interaction rows, and the three averages.
-A gap is recorded here. A dataset is not dropped because a count misses the paper (ADR-0005).
+A gap is recorded here. Weeplaces is the reproduction baseline. Yelp, Gowalla, and Douban are reconstructed variants; a count that misses the paper does not drop the dataset (ADR-0008).
 
 Weeplaces is the format reference. Its user, item, and group counts match Table 1.
 The printed Weeplaces user-item total (1,358,458) and group-item total (180,229) do not

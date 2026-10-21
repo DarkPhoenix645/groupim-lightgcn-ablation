@@ -35,4 +35,4 @@ Measured on `data/weeplaces/` and reproduced by `groupim_lightgcn_ablation.csv_c
 | Gowalla | Restaurant check-ins through June 2011 plus the friend graph. Group = one user and friends at the same place within 15 minutes. A later outing is another group. Keep users/places with 5+ distinct partners. | Nine CSVs in `data/gowalla/`. [gowalla.md](dataset-notes/gowalla.md). |
 | Douban | Co-attendance groups. Keep users and items with 10+ distinct partners. | Nine CSVs in `data/douban/`. The public benchmark's item is the event, not a venue. [douban.md](dataset-notes/douban.md). |
 
-Counts that miss Table 1 are recorded in [table1-comparison.md](table1-comparison.md). A dataset is not dropped (ADR-0005).
+Counts that miss Table 1 are recorded in [table1-comparison.md](table1-comparison.md). Weeplaces is the reproduction baseline. Yelp, Gowalla, and Douban are reconstructed variants and are not dropped (ADR-0008).

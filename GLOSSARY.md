@@ -55,8 +55,8 @@ Neural group recommendation: predict items a **group** of **users** will like, u
 
 | Term | Definition | Avoid |
 | --- | --- | --- |
-| **Weeplaces** | POI check-in dataset shipped with the author GroupIM repo; the format reference and the MLP baseline dataset. | |
-| **Yelp** | Los Angeles restaurants from the Yin et al. ICDE 2019 Yelp-LA benchmark. Groups are prebuilt, so the 15-minute window is not reapplied. Users and businesses with fewer than 5 distinct partners are dropped. | |
-| **Gowalla** | US Food check-ins through June 2011 plus the friend graph. A group is one 15-minute outing of a user and friends at one restaurant. Users and places with fewer than 5 distinct partners are dropped. | |
-| **Douban** | Co-attendance from the Yin et al. ICDE 2019 Douban-Event benchmark. The released item is an event. Users and events with fewer than 10 distinct partners are dropped. | |
-| **Table 1** | The GroupIM paper's dataset statistics (users, items, groups, interactions, average group size). Conversions are judged against this table. | |
+| **Weeplaces** | POI check-in dataset shipped with the author GroupIM repo. The only reproduction baseline (ADR-0008). | |
+| **Yelp** | Reconstructed variant, not the paper's benchmark. Yin et al. ICDE 2019 Yelp-LA: prebuilt groups, no timestamps, users and businesses with at least 5 distinct partners. | Calling it the paper's Yelp |
+| **Gowalla** | Reconstructed variant. figshare US Food check-ins through June 2011. A group is one 15-minute outing, so each group has one item. Users and places with at least 5 distinct partners. | Calling an outing the paper's group |
+| **Douban** | Reconstructed variant. Yin et al. ICDE 2019 Douban-Event. The item is an event, not a venue. Users and events with at least 10 distinct partners. | Calling an event a venue |
+| **Table 1** | The GroupIM paper's dataset statistics. Weeplaces entity counts and averages match it. The other three datasets are compared against it and are not expected to match. | |
