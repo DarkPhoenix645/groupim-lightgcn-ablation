@@ -20,3 +20,5 @@ One config → exactly one results-CSV row. Same config+seed must be detectably 
 - Per-member discriminator scores (needed for MI-variation).
 
 Analysis tickets (#17–#20) consume these files. They do not launch training.
+
+Plots made from those runs are listed in [figures/catalog.md](figures/catalog.md). A new figure is added to that catalog in the same change as the file.

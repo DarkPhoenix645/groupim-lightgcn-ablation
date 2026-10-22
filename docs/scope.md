@@ -53,4 +53,4 @@ Upper bound, not a commitment, until #11 records times on the 3080.
 - **λ:** 2^-4 … 2^6 for MLP and best LightGCN.
 - **Extra seeds:** 5–10 on headline pairs, smallest datasets first, leftover GPU only.
 
-Headline Weeplaces MLP attention numbers from the paper (targets, not pass/fail): N@20 0.521, R@20 0.716, N@50 0.546, R@50 0.813.
+Weeplaces MLP attention baseline (seeds 1111–1113, mean ± sample std): N@20 0.509 ± 0.002, N@50 0.532 ± 0.002, R@20 0.693 ± 0.005, R@50 0.783 ± 0.004. Paper Table 2 targets: 0.521, 0.546, 0.716, 0.813. Detail: [dataset-notes/weeplaces.md](dataset-notes/weeplaces.md).

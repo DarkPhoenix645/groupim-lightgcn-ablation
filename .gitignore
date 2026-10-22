@@ -227,7 +227,18 @@ data/*
 !data/yelp/
 !data/gowalla/
 !data/douban/
-results/
 *.pt
 tmp
 tmp.*
+
+# Run outputs. Checkpoints stay out. Logs, metrics, and figures stay in.
+out/*
+!out/weeplaces/
+out/weeplaces/*
+!out/weeplaces/seed-*/
+out/weeplaces/seed-*/*
+!out/weeplaces/seed-*/metrics.csv
+results/*
+!results/weeplaces/
+results/weeplaces/*
+!results/weeplaces/*.log
