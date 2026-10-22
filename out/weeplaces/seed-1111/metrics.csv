@@ -1,2 +1,0 @@
-dataset,encoder,aggregator,emb_size,seed,pretrain_user,pretrain_mi,epochs,pretrain_epochs,n20,n50,r20,r50,n100,seconds
-weeplaces,mlp,attention,64,1111,1,1,200,100,0.5097929239273071,0.5333136320114136,0.6924057006835938,0.7829743027687073,0.5459970235824585,7123.7

@@ -231,14 +231,20 @@ data/*
 tmp
 tmp.*
 
-# Run outputs. Checkpoints stay out. Logs, metrics, and figures stay in.
-out/*
-!out/weeplaces/
-out/weeplaces/*
-!out/weeplaces/seed-*/
-out/weeplaces/seed-*/*
-!out/weeplaces/seed-*/metrics.csv
+# Run outputs. Checkpoints stay in the run directory. Logs, metrics, figures, and models stay in.
 results/*
-!results/weeplaces/
-results/weeplaces/*
-!results/weeplaces/*.log
+!results/runs.csv
+!results/runs/
+results/runs/*
+!results/runs/*/
+results/runs/*/*
+!results/runs/*/config.json
+!results/runs/*/train.log
+!results/runs/*/metrics.csv
+!results/runs/*/test_groups.csv
+!results/runs/*/member_scores.csv
+!results/runs/*/model_user.pt
+!results/runs/*/model_group.pt
+!results/runs/*/figures/
+results/runs/*/figures/*
+!results/runs/*/figures/*.svg

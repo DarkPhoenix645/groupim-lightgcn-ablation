@@ -1,52 +1,90 @@
 # Figure catalog
 
-Every file in this directory is listed here. A new figure gets a row in the index and a block under its run. Do not add a plot without both.
+Figures for a run live in `results/runs/<run_id>/figures/`. The block below the marker is rewritten by the launcher from those directories. Do not add a plot without a run directory.
 
-Run ids are `{dataset}-{encoder}-{aggregator}-{seeds}`. One run id can own several figures. Conditions live on the run, not copied onto each file.
+The Weeplaces MLP attention baseline is three launcher records, not a separate figure set:
 
-## Index
+| Seed | Run |
+| --- | --- |
+| 1111 | `8c545e92cb67730b` |
+| 1112 | `6e836a908470f5f0` |
+| 1113 | `6e2bf78cbe14734e` |
+
+Seed 1111's log starts at group epoch 91. Seeds 1112 and 1113 include epoch 1. Test mean ± sample std: N@20 0.509 ± 0.002, N@50 0.532 ± 0.002, R@20 0.693 ± 0.005, R@50 0.783 ± 0.004. Detail: [dataset-notes/weeplaces.md](../dataset-notes/weeplaces.md).
+
+<!-- launcher-runs:start -->
+
+## Launcher runs
 
 | Figure | Run | Plotted | Y axis |
 | --- | --- | --- | --- |
-| [weeplaces-val-r20.svg](weeplaces-val-r20.svg) | `weeplaces-mlp-attention-1111-1113` | Validation Recall@20 every 5 group epochs, three seeds. Dashed line is the paper test score 0.716. | Recall@20 |
-| [weeplaces-val-r50.svg](weeplaces-val-r50.svg) | `weeplaces-mlp-attention-1111-1113` | Validation Recall@50 every 5 group epochs, three seeds. Dashed line is the paper test score 0.813. | Recall@50 |
-| [weeplaces-val-n100.svg](weeplaces-val-n100.svg) | `weeplaces-mlp-attention-1111-1113` | Validation NDCG@100 every 5 group epochs, three seeds. This is the checkpoint metric. The paper does not report it. | NDCG@100 |
-| [weeplaces-train-loss.svg](weeplaces-train-loss.svg) | `weeplaces-mlp-attention-1111-1113` | Mean group-training loss after each epoch, three seeds. | Mean train loss |
+| [val-r20.svg](../../results/runs/6e2bf78cbe14734e/figures/val-r20.svg) | `6e2bf78cbe14734e` | Validation Recall@20 every eval epoch. Seed 1113. | Recall@20 |
+| [val-r50.svg](../../results/runs/6e2bf78cbe14734e/figures/val-r50.svg) | `6e2bf78cbe14734e` | Validation Recall@50 every eval epoch. Seed 1113. | Recall@50 |
+| [val-n100.svg](../../results/runs/6e2bf78cbe14734e/figures/val-n100.svg) | `6e2bf78cbe14734e` | Validation NDCG@100 every eval epoch. Seed 1113. | NDCG@100 |
+| [train-loss.svg](../../results/runs/6e2bf78cbe14734e/figures/train-loss.svg) | `6e2bf78cbe14734e` | Mean group-training loss each epoch. Seed 1113. | Mean train loss |
+| [val-r20.svg](../../results/runs/6e836a908470f5f0/figures/val-r20.svg) | `6e836a908470f5f0` | Validation Recall@20 every eval epoch. Seed 1112. | Recall@20 |
+| [val-r50.svg](../../results/runs/6e836a908470f5f0/figures/val-r50.svg) | `6e836a908470f5f0` | Validation Recall@50 every eval epoch. Seed 1112. | Recall@50 |
+| [val-n100.svg](../../results/runs/6e836a908470f5f0/figures/val-n100.svg) | `6e836a908470f5f0` | Validation NDCG@100 every eval epoch. Seed 1112. | NDCG@100 |
+| [train-loss.svg](../../results/runs/6e836a908470f5f0/figures/train-loss.svg) | `6e836a908470f5f0` | Mean group-training loss each epoch. Seed 1112. | Mean train loss |
+| [val-r20.svg](../../results/runs/8c545e92cb67730b/figures/val-r20.svg) | `8c545e92cb67730b` | Validation Recall@20 every eval epoch. Seed 1111. | Recall@20 |
+| [val-r50.svg](../../results/runs/8c545e92cb67730b/figures/val-r50.svg) | `8c545e92cb67730b` | Validation Recall@50 every eval epoch. Seed 1111. | Recall@50 |
+| [val-n100.svg](../../results/runs/8c545e92cb67730b/figures/val-n100.svg) | `8c545e92cb67730b` | Validation NDCG@100 every eval epoch. Seed 1111. | NDCG@100 |
+| [train-loss.svg](../../results/runs/8c545e92cb67730b/figures/train-loss.svg) | `8c545e92cb67730b` | Mean group-training loss each epoch. Seed 1111. | Mean train loss |
 
-## `weeplaces-mlp-attention-1111-1113`
+## `6e2bf78cbe14734e`
 
-MLP GroupIM, attention aggregator, author Weeplaces files. Reproduction baseline in [dataset-notes/weeplaces.md](../dataset-notes/weeplaces.md).
+Encoder `mlp`, aggregator `attention`, dataset `weeplaces`, seed 1113.
 
 | Field | Value |
 | --- | --- |
-| Dataset | `weeplaces` (author release, not rebuilt) |
-| Encoder | `mlp` |
-| K | ignored |
-| Aggregator | `attention` |
-| Losses | `L_G + λ L_U + L_MI` |
+| Losses | `full` |
 | λ | 1.0 |
+| K | 0 |
 | Embedding dim | 64 |
-| Dropout | 0.4 |
-| Batch size | 256 |
-| Negatives per group | 5 |
-| User pretrain | on, 100 epochs, Adam lr 0.01 |
-| MI pretrain | on, 10 epochs (hardcoded) |
-| Group epochs | 200 |
-| Group optimizer | Adam, lr 5e-3, weight decay 0 |
-| Eval | validation every 5 epochs |
-| Checkpoint | best validation NDCG@100, then test |
-| Item embeddings | group predictor copied from the pretrained user predictor once, then trained |
-| Seeds | 1111, 1112, 1113 |
-| Workers | 0 |
-| Hardware | one RTX 3080 (10 GB), WSL |
-| Command | `uv run python train.py --dataset weeplaces --aggregator attention --pretrain_user --pretrain_mi --cuda --seed <seed> --save out/weeplaces/seed-<seed>/model_user.pt --save_group out/weeplaces/seed-<seed>/model_group.pt` |
+| Epochs | 200 group, 100 user pretrain, 10 MI |
+| Pretrain | user True, MI True |
+| Tied item embeddings | True |
+| CUDA | True |
+| Log | [train.log](../../results/runs/6e2bf78cbe14734e/train.log) |
+| Metrics | [metrics.csv](../../results/runs/6e2bf78cbe14734e/metrics.csv) |
 
-| Seed | Log | Metrics | Wall clock |
-| --- | --- | --- | --- |
-| 1111 | [seed-1111.log](../../results/weeplaces/seed-1111.log) | [metrics.csv](../../out/weeplaces/seed-1111/metrics.csv) | 7,124 s |
-| 1112 | [seed-1112.log](../../results/weeplaces/seed-1112.log) | [metrics.csv](../../out/weeplaces/seed-1112/metrics.csv) | 7,090 s |
-| 1113 | [seed-1113.log](../../results/weeplaces/seed-1113.log) | [metrics.csv](../../out/weeplaces/seed-1113/metrics.csv) | 7,216 s |
+Test N@20 0.5094, N@50 0.5327, R@20 0.6979, R@50 0.7878. Wall clock 7216.1 s.
 
-Seed 1111's log starts at group epoch 91. The curves for that seed start there. Seeds 1112 and 1113 include epoch 1.
+## `6e836a908470f5f0`
 
-Test metrics from the saved checkpoints, mean ± sample std: N@20 0.509 ± 0.002, N@50 0.532 ± 0.002, R@20 0.693 ± 0.005, R@50 0.783 ± 0.004.
+Encoder `mlp`, aggregator `attention`, dataset `weeplaces`, seed 1112.
+
+| Field | Value |
+| --- | --- |
+| Losses | `full` |
+| λ | 1.0 |
+| K | 0 |
+| Embedding dim | 64 |
+| Epochs | 200 group, 100 user pretrain, 10 MI |
+| Pretrain | user True, MI True |
+| Tied item embeddings | True |
+| CUDA | True |
+| Log | [train.log](../../results/runs/6e836a908470f5f0/train.log) |
+| Metrics | [metrics.csv](../../results/runs/6e836a908470f5f0/metrics.csv) |
+
+Test N@20 0.5067, N@50 0.5302, R@20 0.6887, R@50 0.7793. Wall clock 7090.3 s.
+
+## `8c545e92cb67730b`
+
+Encoder `mlp`, aggregator `attention`, dataset `weeplaces`, seed 1111.
+
+| Field | Value |
+| --- | --- |
+| Losses | `full` |
+| λ | 1.0 |
+| K | 0 |
+| Embedding dim | 64 |
+| Epochs | 200 group, 100 user pretrain, 10 MI |
+| Pretrain | user True, MI True |
+| Tied item embeddings | True |
+| CUDA | True |
+| Log | [train.log](../../results/runs/8c545e92cb67730b/train.log) |
+| Metrics | [metrics.csv](../../results/runs/8c545e92cb67730b/metrics.csv) |
+
+Test N@20 0.5098, N@50 0.5333, R@20 0.6924, R@50 0.7830. Wall clock 7123.7 s.
+<!-- launcher-runs:end -->
