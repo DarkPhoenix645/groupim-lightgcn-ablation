@@ -21,4 +21,6 @@ One config → exactly one results-CSV row. Same config+seed must be detectably 
 
 Analysis tickets (#17–#20) consume these files. They do not launch training.
 
-Plots made from those runs are listed in [figures/catalog.md](figures/catalog.md). A new figure is added to that catalog in the same change as the file.
+`uv run python -m groupim_lightgcn_ablation.launch` is the command that writes them. The config and seed hash to a run id. Artifacts for that id land in `results/runs/<run_id>/`: `train.log`, `metrics.csv`, `test_groups.csv`, `member_scores.csv`, `model_user.pt`, `model_group.pt`, and `figures/*.svg`. There is no separate output directory. The ledger of one row per run id is `results/runs.csv`. A repeat of the same config and seed keeps that id and replaces the row. Plots from launcher runs are appended to [figures/catalog.md](figures/catalog.md).
+
+Coherence on a test group is the mean pairwise Pearson correlation of its members' item vectors. Aggregate diversity is the count of distinct items across those members. Discriminator scores are the bilinear logits of present members.

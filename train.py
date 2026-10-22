@@ -38,12 +38,27 @@ parser.add_argument('--pretrain_epochs', type=int, default=100, help='# pre-trai
 
 parser.add_argument('--cuda', action='store_true', help='use CUDA')
 parser.add_argument('--seed', type=int, default=1111, help='random seed for reproducibility')
+parser.add_argument('--encoder', choices=['mlp', 'lightgcn'], default='mlp')
+parser.add_argument('--k', type=int, default=0, help='LightGCN layers. Ignored for the MLP encoder.')
+parser.add_argument('--losses', choices=['full'], default='full', help='full is L_G + λ L_U + L_MI')
+parser.add_argument('--mi-epochs', type=int, default=10, help='MI pretrain epochs')
+parser.add_argument('--tied-item-embeddings', action=argparse.BooleanOptionalAction, default=True)
+parser.add_argument('--artifact-dir', type=str, default='', help='Write per-group test records here')
 
 # Model save file parameters.
-parser.add_argument('--save', type=str, default='out/model_user.pt', help='path to save the final model')
-parser.add_argument('--save_group', type=str, default='out/model_group.pt', help='path to save the final model')
+parser.add_argument('--save', type=str, default='', help='path to save the user encoder; default is <artifact-dir>/model_user.pt')
+parser.add_argument('--save_group', type=str, default='', help='path to save the group model; default is <artifact-dir>/model_group.pt')
 
 args = parser.parse_args()
+if args.encoder != 'mlp':
+    raise SystemExit('The LightGCN encoder is not in this tree yet (issue #8).')
+if not args.artifact_dir:
+    raise SystemExit('pass --artifact-dir; checkpoints and records go in the run directory')
+os.makedirs(args.artifact_dir, exist_ok=True)
+if not args.save:
+    args.save = os.path.join(args.artifact_dir, 'model_user.pt')
+if not args.save_group:
+    args.save_group = os.path.join(args.artifact_dir, 'model_group.pt')
 for save_path in (args.save, args.save_group):
     os.makedirs(os.path.dirname(save_path) or ".", exist_ok=True)
 
@@ -148,12 +163,13 @@ try:
         print('| User evaluation | val loss {:4.4f} | n100 {:4.4f} | r20 {:4.4f} | '
               'r50 {:4.4f}'.format(val_scores.loss, val_scores.n100, val_scores.r20, val_scores.r50))
         print("Initializing group recommender with pre-train user encoder")
-        # Initialize the group predictor (item embedding) weight based on the pre-trained user predictor.
-        model.group_predictor.weight.data = model.user_preference_encoder.user_predictor.weight.data
+        if args.tied_item_embeddings:
+            # Initialize the group predictor (item embedding) weight based on the pre-trained user predictor.
+            model.group_predictor.weight.data = model.user_preference_encoder.user_predictor.weight.data
 
     if args.pretrain_mi:
         # pre-train MI estimator.
-        for epoch in range(0, 10):
+        for epoch in range(0, args.mi_epochs):
             model.train()
             t = time.time()
             mi_epoch_loss = 0.0
@@ -280,3 +296,13 @@ with open(metrics_path, "a", newline="") as handle:
         "seconds": round(time.time() - run_started, 1),
     })
 print(f"wrote {metrics_path}")
+if args.artifact_dir:
+    from groupim_lightgcn_ablation.group_stats import dump_test_groups
+    n_groups = dump_test_groups(
+        model,
+        test_group_loader,
+        device,
+        os.path.join(args.artifact_dir, "test_groups.csv"),
+        os.path.join(args.artifact_dir, "member_scores.csv"),
+    )
+    print(f"wrote {n_groups} test groups to {args.artifact_dir}")

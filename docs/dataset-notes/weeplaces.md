@@ -28,7 +28,7 @@ Of 13,846 test group-item rows, 12,755 are also in some member's `train_ui`, 718
 
 ## MLP attention baseline
 
-Author setup: attention aggregator, user pretrain (100 epochs), MI pretrain (10 epochs), 200 group epochs, embedding size 64. The checkpoint is the best validation NDCG@100. Test metrics below are that checkpoint. Seeds 1111, 1112, 1113. Per-seed rows are `out/weeplaces/seed-*/metrics.csv`.
+Author setup: attention aggregator, user pretrain (100 epochs), MI pretrain (10 epochs), 200 group epochs, embedding size 64. The checkpoint is the best validation NDCG@100. Test metrics below are that checkpoint. Seeds 1111, 1112, 1113 are run ids `8c545e92cb67730b`, `6e836a908470f5f0`, and `6e2bf78cbe14734e` in `results/runs/`.
 
 These are the MLP baseline for later tables. The gap to Table 2 is small and stable across seeds, so it is recorded rather than treated as a broken port. Sample standard deviation, n−1.
 
@@ -41,4 +41,4 @@ These are the MLP baseline for later tables. The gap to Table 2 is small and sta
 
 Wall clock was 7,124 s, 7,090 s, and 7,216 s.
 
-Validation curves and the group train loss are in [figures/catalog.md](../figures/catalog.md) under `weeplaces-mlp-attention-1111-1113`. Seed 1111's text log starts at group epoch 91. Seeds 1112 and 1113 are complete.
+Validation curves and the group train loss are in [figures/catalog.md](../figures/catalog.md). Seed 1111's text log starts at group epoch 91. Seeds 1112 and 1113 are complete.
