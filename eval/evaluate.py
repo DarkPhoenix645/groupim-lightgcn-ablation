@@ -2,14 +2,21 @@ import torch
 import numpy as np
 from eval import metrics
 import gc
+from collections import namedtuple
+
+# n100 is the author checkpoint metric. n20 and n50 are the paper Table 2 metrics.
+EvalResult = namedtuple("EvalResult", "loss n100 r20 r50 n20 n50")
+
+
+def _means(chunks):
+    return torch.mean(torch.cat(chunks))
 
 
 def evaluate_user(model, eval_loader, device, mode='pretrain'):
     """ evaluate model on recommending items to users (primarily during pre-training step) """
     model.eval()
     eval_loss = 0.0
-    n100_list, r20_list, r50_list = [], [], []
-    eval_preds = []
+    n20_list, n50_list, n100_list, r20_list, r50_list = [], [], [], [], []
     with torch.no_grad():
         for batch_index, eval_data in enumerate(eval_loader):
             eval_data = [x.to(device, non_blocking=True) for x in eval_data]
@@ -26,31 +33,29 @@ def evaluate_user(model, eval_loader, device, mode='pretrain'):
             recon_batch = torch.softmax(recon_batch, 1)  # softmax over the item set to get normalized scores.
             recon_batch[fold_in_items.nonzero()] = -np.inf
 
+            n20 = metrics.ndcg_binary_at_k_batch_torch(recon_batch, held_out_items, 20, device=device)
+            n50 = metrics.ndcg_binary_at_k_batch_torch(recon_batch, held_out_items, 50, device=device)
             n100 = metrics.ndcg_binary_at_k_batch_torch(recon_batch, held_out_items, 100, device=device)
             r20 = metrics.recall_at_k_batch_torch(recon_batch, held_out_items, 20)
             r50 = metrics.recall_at_k_batch_torch(recon_batch, held_out_items, 50)
 
+            n20_list.append(n20)
+            n50_list.append(n50)
             n100_list.append(n100)
             r20_list.append(r20)
             r50_list.append(r50)
-
-            eval_preds.append(recon_batch.cpu().numpy())
             del users, fold_in_items, held_out_items, recon_batch
     gc.collect()
     num_batches = max(1, len(eval_loader.dataset) / eval_loader.batch_size)
     eval_loss /= num_batches
-    n100_list = torch.cat(n100_list)
-    r20_list = torch.cat(r20_list)
-    r50_list = torch.cat(r50_list)
-    return eval_loss, torch.mean(n100_list), torch.mean(r20_list), torch.mean(r50_list), np.array(eval_preds)
+    return EvalResult(eval_loss, _means(n100_list), _means(r20_list), _means(r50_list), _means(n20_list), _means(n50_list))
 
 
 def evaluate_group(model, eval_group_loader, device):
     """ evaluate model on recommending items to groups """
     model.eval()
     eval_loss = 0.0
-    n100_list, r20_list, r50_list = [], [], []
-    eval_preds = []
+    n20_list, n50_list, n100_list, r20_list, r50_list = [], [], [], [], []
 
     with torch.no_grad():
         for batch_idx, data in enumerate(eval_group_loader):
@@ -63,20 +68,18 @@ def evaluate_group(model, eval_group_loader, device):
             result = recon_batch.softmax(1)  # softmax over the item set to get normalized scores.
             heldout_data = group_items
 
+            n20 = metrics.ndcg_binary_at_k_batch_torch(result, heldout_data, 20, device=device)
+            n50 = metrics.ndcg_binary_at_k_batch_torch(result, heldout_data, 50, device=device)
+            n100 = metrics.ndcg_binary_at_k_batch_torch(result, heldout_data, 100, device=device)
             r20 = metrics.recall_at_k_batch_torch(result, heldout_data, 20)
             r50 = metrics.recall_at_k_batch_torch(result, heldout_data, 50)
-            n100 = metrics.ndcg_binary_at_k_batch_torch(result, heldout_data, 100, device=device)
 
+            n20_list.append(n20)
+            n50_list.append(n50)
             n100_list.append(n100)
             r20_list.append(r20)
             r50_list.append(r50)
-
-            eval_preds.append(recon_batch.cpu().numpy())
             del group, group_users, group_mask, group_items, user_items
     gc.collect()
-
-    n100_list = torch.cat(n100_list)
-    r20_list = torch.cat(r20_list)
-    r50_list = torch.cat(r50_list)
-    return eval_loss, torch.mean(n100_list), torch.mean(r20_list), torch.mean(r50_list), np.array(eval_preds)
+    return EvalResult(eval_loss, _means(n100_list), _means(r20_list), _means(r50_list), _means(n20_list), _means(n50_list))
 

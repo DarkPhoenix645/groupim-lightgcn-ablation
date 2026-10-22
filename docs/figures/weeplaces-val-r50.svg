@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="860" height="420" viewBox="0 0 860 420">
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="64" y="22" font-family="sans-serif" font-size="16" fill="#111827">Weeplaces validation Recall@50</text>
+<line x1="64.0" y1="36" x2="64.0" y2="372" stroke="#e5e7eb"/>
+<text x="64.0" y="402" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#6b7280">1</text>
+<line x1="215.3" y1="36" x2="215.3" y2="372" stroke="#e5e7eb"/>
+<text x="215.3" y="402" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#6b7280">40</text>
+<line x1="370.5" y1="36" x2="370.5" y2="372" stroke="#e5e7eb"/>
+<text x="370.5" y="402" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#6b7280">80</text>
+<line x1="525.6" y1="36" x2="525.6" y2="372" stroke="#e5e7eb"/>
+<text x="525.6" y="402" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#6b7280">120</text>
+<line x1="680.8" y1="36" x2="680.8" y2="372" stroke="#e5e7eb"/>
+<text x="680.8" y="402" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#6b7280">160</text>
+<line x1="836.0" y1="36" x2="836.0" y2="372" stroke="#e5e7eb"/>
+<text x="836.0" y="402" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#6b7280">200</text>
+<line x1="64" y1="372.0" x2="836" y2="372.0" stroke="#e5e7eb"/>
+<text x="56" y="376.0" text-anchor="end" font-family="sans-serif" font-size="11" fill="#6b7280">0.45</text>
+<line x1="64" y1="304.8" x2="836" y2="304.8" stroke="#e5e7eb"/>
+<text x="56" y="308.8" text-anchor="end" font-family="sans-serif" font-size="11" fill="#6b7280">0.54</text>
+<line x1="64" y1="237.6" x2="836" y2="237.6" stroke="#e5e7eb"/>
+<text x="56" y="241.6" text-anchor="end" font-family="sans-serif" font-size="11" fill="#6b7280">0.63</text>
+<line x1="64" y1="170.4" x2="836" y2="170.4" stroke="#e5e7eb"/>
+<text x="56" y="174.4" text-anchor="end" font-family="sans-serif" font-size="11" fill="#6b7280">0.72</text>
+<line x1="64" y1="103.2" x2="836" y2="103.2" stroke="#e5e7eb"/>
+<text x="56" y="107.2" text-anchor="end" font-family="sans-serif" font-size="11" fill="#6b7280">0.81</text>
+<line x1="64" y1="36.0" x2="836" y2="36.0" stroke="#e5e7eb"/>
+<text x="56" y="40.0" text-anchor="end" font-family="sans-serif" font-size="11" fill="#6b7280">0.90</text>
+<line x1="64" y1="36" x2="64" y2="372" stroke="#111827"/>
+<line x1="64" y1="372" x2="836" y2="372" stroke="#111827"/>
+<text x="450.0" y="416" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#374151">Group-training epoch</text>
+<text x="16" y="204.0" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#374151" transform="rotate(-90 16 204.0)">Recall@50</text>
+<line x1="64" y1="101.0" x2="836" y2="101.0" stroke="#9ca3af" stroke-dasharray="4 4"/>
+<text x="832" y="97.0" text-anchor="end" font-family="sans-serif" font-size="11" fill="#6b7280">paper test R@50 0.813</text>
+<polyline fill="none" stroke="#1d4e89" stroke-width="2" points="413.1,114.7733 432.5,116.4160 451.9,113.0560 471.3,114.0267 490.7,114.1760 510.1,116.4907 529.5,117.1627 548.9,116.6400 568.3,116.5653 587.7,118.4320 607.1,114.9973 626.5,112.6827 645.9,117.0133 665.3,115.9680 684.7,118.1333 704.1,112.8320 723.5,114.6987 742.9,116.1920 762.3,114.6240 781.7,114.1760 801.1,114.9227 820.5,118.1333"/>
+<line x1="72" y1="50" x2="90" y2="50" stroke="#1d4e89" stroke-width="2"/>
+<text x="94" y="54" font-family="sans-serif" font-size="11" fill="#111827">seed 1111</text>
+<polyline fill="none" stroke="#b45309" stroke-width="2" points="64.0,290.4640 83.4,158.4533 102.8,142.1760 122.2,129.6320 141.6,127.0933 161.0,126.0480 180.4,123.8827 199.8,122.3893 219.2,119.2533 238.6,119.2533 258.0,115.1467 277.4,116.7147 296.8,115.9680 316.2,115.4453 335.6,117.1627 355.0,116.4907 374.4,116.3413 393.7,117.3120 413.1,117.1627 432.5,116.9387 451.9,118.2080 471.3,116.1920 490.7,120.7467 510.1,116.9387 529.5,118.4320 548.9,115.9680 568.3,115.3707 587.7,116.8640 607.1,115.2960 626.5,114.7733 645.9,116.9387 665.3,116.4160 684.7,115.1467 704.1,115.5200 723.5,115.7440 742.9,117.6853 762.3,117.7600 781.7,116.4907 801.1,117.0880 820.5,115.3707"/>
+<line x1="160" y1="50" x2="178" y2="50" stroke="#b45309" stroke-width="2"/>
+<text x="182" y="54" font-family="sans-serif" font-size="11" fill="#111827">seed 1112</text>
+<polyline fill="none" stroke="#0f766e" stroke-width="2" points="64.0,291.8827 83.4,163.9040 102.8,141.8027 122.2,129.7813 141.6,125.8987 161.0,122.0160 180.4,119.0293 199.8,119.6267 219.2,114.4747 238.6,115.8187 258.0,118.4320 277.4,113.8773 296.8,115.0720 316.2,112.3840 335.6,113.1307 355.0,113.6533 374.4,111.7120 393.7,112.9813 413.1,113.3547 432.5,111.7120 451.9,109.4720 471.3,112.8320 490.7,110.1440 510.1,113.2053 529.5,114.6987 548.9,112.4587 568.3,112.2347 587.7,110.4427 607.1,109.0987 626.5,112.0107 645.9,111.0400 665.3,111.7120 684.7,110.2187 704.1,113.0560 723.5,114.8480 742.9,113.0560 762.3,111.6373 781.7,112.7573 801.1,110.2187 820.5,113.3547"/>
+<line x1="248" y1="50" x2="266" y2="50" stroke="#0f766e" stroke-width="2"/>
+<text x="270" y="54" font-family="sans-serif" font-size="11" fill="#111827">seed 1113</text>
+</svg>

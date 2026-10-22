@@ -1,4 +1,6 @@
 import argparse
+import csv
+import random
 import time
 import gc
 import os
@@ -38,12 +40,19 @@ parser.add_argument('--cuda', action='store_true', help='use CUDA')
 parser.add_argument('--seed', type=int, default=1111, help='random seed for reproducibility')
 
 # Model save file parameters.
-parser.add_argument('--save', type=str, default='model_user.pt', help='path to save the final model')
-parser.add_argument('--save_group', type=str, default='model_group.pt', help='path to save the final model')
+parser.add_argument('--save', type=str, default='out/model_user.pt', help='path to save the final model')
+parser.add_argument('--save_group', type=str, default='out/model_group.pt', help='path to save the final model')
 
 args = parser.parse_args()
+for save_path in (args.save, args.save_group):
+    os.makedirs(os.path.dirname(save_path) or ".", exist_ok=True)
 
-torch.manual_seed(args.seed)  # Set the random seed manually for reproducibility.
+run_started = time.time()
+random.seed(args.seed)
+np.random.seed(args.seed)
+torch.manual_seed(args.seed)
+if torch.cuda.is_available():
+    torch.cuda.manual_seed_all(args.seed)
 
 if args.cuda and not torch.cuda.is_available():
     raise SystemExit("CUDA was requested with --cuda, but no CUDA device is available")
@@ -54,8 +63,9 @@ if torch.cuda.is_available() and not args.cuda:
 # Load data
 ###############################################################################
 
-# Windows spawns DataLoader workers by re-importing this script. The author used 6 workers.
-num_workers = 0 if os.name == "nt" else 6
+# The author used 6 workers. On this WSL box that many workers densify group
+# batches and the OOM killer sends SIGKILL. The main process is enough.
+num_workers = 0
 train_params = {'batch_size': args.batch_size, 'shuffle': False, 'num_workers': num_workers, 'pin_memory': True}
 eval_params = {'batch_size': args.batch_size, 'shuffle': False, 'num_workers': num_workers, 'pin_memory': True}
 device = torch.device("cuda" if args.cuda else "cpu")
@@ -123,20 +133,20 @@ try:
             print('| epoch {:3d} |  time {:4.2f} | loss {:4.2f}'.format(epoch + 1, elapsed,
                                                                         train_user_loss / len(train_loader)))
             if epoch % args.eval_freq == 0:
-                val_loss, n100, r20, r50, _ = evaluate_user(model, val_loader, device, mode='pretrain')
+                val_scores = evaluate_user(model, val_loader, device, mode='pretrain')
 
-                if n100 > best_user_n100:
+                if val_scores.n100 > best_user_n100:
                     torch.save(model.state_dict(), args.save)
-                    best_user_n100 = n100
+                    best_user_n100 = val_scores.n100
 
         print("Load best pre-trained user encoder")
         model.load_state_dict(torch.load(args.save, weights_only=False))
         model = model.to(device)
 
-        val_loss, n100, r20, r50, _ = evaluate_user(model, val_loader, device, mode='pretrain')
+        val_scores = evaluate_user(model, val_loader, device, mode='pretrain')
         print('=' * 89)
         print('| User evaluation | val loss {:4.4f} | n100 {:4.4f} | r20 {:4.4f} | '
-              'r50 {:4.4f}'.format(val_loss, n100, r20, r50))
+              'r50 {:4.4f}'.format(val_scores.loss, val_scores.n100, val_scores.r20, val_scores.r50))
         print("Initializing group recommender with pre-train user encoder")
         # Initialize the group predictor (item embedding) weight based on the pre-trained user predictor.
         model.group_predictor.weight.data = model.user_preference_encoder.user_predictor.weight.data
@@ -163,7 +173,7 @@ try:
                 mi_loss = model.discriminator.mi_loss(scores_observed, group_mask, scores_corrupted, device=device)
                 mi_loss.backward()
                 optimizer_gr.step()
-                mi_epoch_loss += mi_loss
+                mi_epoch_loss += mi_loss.item()
                 del group, group_users, group_mask, group_items, user_items, corrupted_user_items, \
                     obs_user_embed, corrupted_user_embed
             gc.collect()
@@ -195,18 +205,18 @@ try:
 
         if epoch % args.eval_freq == 0:
             # Group evaluation.
-            val_loss_group, n100_group, r20_group, r50_group, _ = evaluate_group(model, val_group_loader, device)
+            val_group = evaluate_group(model, val_group_loader, device)
 
             print('-' * 89)
             print('| end of epoch {:3d} | time: {:4.2f}s | n100 (group) {:5.4f} | r20 (group) {:5.4f} | r50 (group) '
-                  '{:5.4f}'.format(epoch + 1, time.time() - epoch_start_time, n100_group, r20_group, r50_group))
+                  '{:5.4f}'.format(epoch + 1, time.time() - epoch_start_time, val_group.n100, val_group.r20, val_group.r50))
             print('-' * 89)
 
-            # Save the model if the n100 is the best we've seen so far.
-            if n100_group > best_group_n100:
+            # Save the model if the n100 is the best we've seen so far. Author checkpoint metric.
+            if val_group.n100 > best_group_n100:
                 with open(args.save_group, 'wb') as f:
                     torch.save(model, f)
-                best_group_n100 = n100_group
+                best_group_n100 = val_group.n100
 
 except KeyboardInterrupt:
     print('-' * 89)
@@ -217,24 +227,56 @@ with open(args.save_group, 'rb') as f:
     model = torch.load(f, map_location=device, weights_only=False)
     model = model.to(device)
 
+def _metric(value):
+    return float(value.detach().cpu())
+
+
 # Best validation evaluation
-val_loss, n100, r20, r50, _ = evaluate_user(model, val_loader, device, mode='group')
+val_scores = evaluate_user(model, val_loader, device, mode='group')
 print('=' * 89)
 print('| User evaluation | val loss {:4.4f} | n100 {:4.4f} | r20 {:4.4f} | r50 {:4.4f}'
-      .format(val_loss, n100, r20, r50))
+      .format(val_scores.loss, val_scores.n100, val_scores.r20, val_scores.r50))
 
 # Test evaluation
-test_loss, n100, r20, r50, _ = evaluate_user(model, test_loader, device, mode='group')
+test_scores = evaluate_user(model, test_loader, device, mode='group')
 print('=' * 89)
 print('| User evaluation | test loss {:4.4f} | n100 {:4.4f} | r20 {:4.4f} | r50 {:4.4f}'
-      .format(test_loss, n100, r20, r50))
+      .format(test_scores.loss, test_scores.n100, test_scores.r20, test_scores.r50))
 
 print('=' * 89)
-_, n100_group, r20_group, r50_group, _ = evaluate_group(model, val_group_loader, device)
-print('| Group evaluation (val) | n100 (group) {:4.4f} | r20 (group) {:4.4f} | r50 (group) {:4.4f}'
-      .format(n100_group, r20_group, r50_group))
+val_group = evaluate_group(model, val_group_loader, device)
+print('| Group evaluation (val) | n20 {:4.4f} | n50 {:4.4f} | n100 {:4.4f} | r20 {:4.4f} | r50 {:4.4f}'
+      .format(val_group.n20, val_group.n50, val_group.n100, val_group.r20, val_group.r50))
 
 print('=' * 89)
-_, n100_group, r20_group, r50_group, _ = evaluate_group(model, test_group_loader, device)
-print('| Group evaluation (test) | n100 (group) {:4.4f} | r20 (group) {:4.4f} | r50 (group) {:4.4f}'
-      .format(n100_group, r20_group, r50_group))
+test_group = evaluate_group(model, test_group_loader, device)
+print('| Group evaluation (test) | n20 {:4.4f} | n50 {:4.4f} | n100 {:4.4f} | r20 {:4.4f} | r50 {:4.4f}'
+      .format(test_group.n20, test_group.n50, test_group.n100, test_group.r20, test_group.r50))
+
+metrics_path = os.path.join(os.path.dirname(args.save_group) or ".", "metrics.csv")
+wrote_header = not os.path.exists(metrics_path)
+with open(metrics_path, "a", newline="") as handle:
+    writer = csv.DictWriter(handle, fieldnames=[
+        "dataset", "encoder", "aggregator", "emb_size", "seed", "pretrain_user", "pretrain_mi",
+        "epochs", "pretrain_epochs", "n20", "n50", "r20", "r50", "n100", "seconds",
+    ])
+    if wrote_header:
+        writer.writeheader()
+    writer.writerow({
+        "dataset": args.dataset,
+        "encoder": "mlp",
+        "aggregator": args.aggregator,
+        "emb_size": args.emb_size,
+        "seed": args.seed,
+        "pretrain_user": int(args.pretrain_user),
+        "pretrain_mi": int(args.pretrain_mi),
+        "epochs": args.epochs,
+        "pretrain_epochs": args.pretrain_epochs,
+        "n20": _metric(test_group.n20),
+        "n50": _metric(test_group.n50),
+        "r20": _metric(test_group.r20),
+        "r50": _metric(test_group.r50),
+        "n100": _metric(test_group.n100),
+        "seconds": round(time.time() - run_started, 1),
+    })
+print(f"wrote {metrics_path}")
