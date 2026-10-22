@@ -8,6 +8,7 @@
 | [table1-comparison.md](table1-comparison.md) | Paper Table 1 next to the CSV counts |
 | [dataset-notes/](dataset-notes/) | Per-dataset source, split audit, and Table 1 gaps |
 | [experiments.md](experiments.md) | Run config, concurrency, artifacts |
+| [figures/catalog.md](figures/catalog.md) | Figure index and the run conditions behind each plot |
 | [adr/](adr/) | Decisions |
 | [agents/](agents/) | Issue tracker + how skills consume domain docs |
 | `papers/` | GroupIM and LightGCN PDFs |

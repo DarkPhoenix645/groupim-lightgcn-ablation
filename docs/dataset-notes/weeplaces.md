@@ -41,4 +41,4 @@ These are the MLP baseline for later tables. The gap to Table 2 is small and sta
 
 Wall clock was 7,124 s, 7,090 s, and 7,216 s.
 
-Validation curves and the group train loss are in `docs/figures/`. Seed 1111's text log starts at group epoch 91. Seeds 1112 and 1113 are complete. The logs are `results/weeplaces/seed-1111.log`, `results/weeplaces/seed-1112.log`, and `results/weeplaces/seed-1113.log`.
+Validation curves and the group train loss are in [figures/catalog.md](../figures/catalog.md) under `weeplaces-mlp-attention-1111-1113`. Seed 1111's text log starts at group epoch 91. Seeds 1112 and 1113 are complete.
