@@ -54,7 +54,8 @@ class EvalUserDataset(data.Dataset):
         """ load user_id, fold-in items, held-out items """
         user = self.user_list[index]
         fold_in, held_out = self.data_tr[user, :].toarray(), self.data_te[user, :].toarray()  # [I], [I]
-        return user, torch.from_numpy(fold_in).squeeze(), held_out.squeeze()  # user, fold-in items, fold-out items.
+        global_user = self.start_idx + user
+        return global_user, torch.from_numpy(fold_in).squeeze(), held_out.squeeze()
 
     def _load_tr_te_data(self, datatype='val'):
         """ load user-item interactions of val/test user sets as two sparse matrices of fold-in and held-out items """
@@ -65,6 +66,8 @@ class EvalUserDataset(data.Dataset):
 
         start_idx = min(ui_df_tr['user'].min(), ui_df_te['user'].min())
         end_idx = max(ui_df_tr['user'].max(), ui_df_te['user'].max())
+        # Rows of the sparse matrix are local. LightGCN indexes the global id.
+        self.start_idx = int(start_idx)
 
         rows_tr, cols_tr = ui_df_tr['user'] - start_idx, ui_df_tr['item']
         rows_te, cols_te = ui_df_te['user'] - start_idx, ui_df_te['item']

@@ -33,7 +33,7 @@ Neural group recommendation: predict items a **group** of **users** will like, u
 | **Uniform weights** | Aggregator that gives every member the same weight. | |
 | **Cosine-similarity weights** | Aggregator that weights members by cosine similarity rather than learned attention. | |
 | **Discriminator** | Network that scores agreement between a group embedding and a member embedding for mutual information. | Critic, MI head |
-| **User pretraining** | Optimising the user preference encoder on user-item interactions (`L_U`) before group training. | Warm start, pretrain (unqualified) |
+| **User pretraining** | Optimising the user preference encoder on user-item interactions (`L_U`) before group training. LightGCN updates its ID embeddings only, then the run reports user-level recall. | Warm start, pretrain (unqualified) |
 | **MI pretraining** | A short run that trains only the discriminator before full group training. | Pretrain (unqualified) |
 | **Group loss (`L_G`)** | The group ranking / reconstruction objective on group-item interactions. | |
 | **User loss (`L_U`)** | The individual user-item objective, scaled by λ when added to group training. | |
