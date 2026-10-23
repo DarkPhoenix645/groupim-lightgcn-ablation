@@ -53,8 +53,6 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def config_from_args(args: argparse.Namespace) -> dict:
-    if args.encoder != "mlp":
-        raise SystemExit("The LightGCN encoder is not in this tree yet (issue #8).")
     return canonical(
         {
             "dataset": args.dataset,

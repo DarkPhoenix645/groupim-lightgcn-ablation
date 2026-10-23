@@ -55,7 +55,7 @@ class TrainGroupDataset(data.Dataset):
 
         user_items = torch.from_numpy(self.group_inputs[group].toarray())  # [G, |I|] group member items
 
-        return torch.tensor([group]), user_ids, group_mask, group_items, user_items, corrupted_user_items
+        return torch.tensor([group]), user_ids, group_mask, group_items, user_items, corrupted_user_items, corrupted_group
 
     def _load_group_data(self):
         """ load training group-item interactions as a sparse matrix and user-group memberships """

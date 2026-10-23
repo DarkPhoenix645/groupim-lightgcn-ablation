@@ -78,7 +78,7 @@ def records_from_batch(model, group, group_users, group_mask, group_items, user_
     n50 = metrics.ndcg_binary_at_k_batch_torch(scores, group_items, 50, device=device)
     r20 = metrics.recall_at_k_batch_torch(scores, group_items, 20)
     r50 = metrics.recall_at_k_batch_torch(scores, group_items, 50)
-    member_logits = _member_logits(model, user_items, group_mask)
+    member_logits = _member_logits(model, user_items, group_users, group_mask)
 
     group_rows = []
     member_rows = []
@@ -122,8 +122,8 @@ def _forward_eval(model, group, group_users, group_mask, user_items):
         model.train(was_training)
 
 
-def _member_logits(model, user_items, group_mask):
-    embeds = model.user_preference_encoder(user_items)
+def _member_logits(model, user_items, group_users, group_mask):
+    embeds = model.user_preference_encoder(user_items, group_users)
     group_embed = model.preference_aggregator(embeds, group_mask, mlp=False)
     scores = model.discriminator(group_embed, embeds, group_mask)
     return scores.squeeze(-1)

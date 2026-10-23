@@ -27,7 +27,7 @@ class Encoder(nn.Module):
         self.user_predictor = nn.Linear(self.embedding_dim, self.n_items, bias=False)  # item embedding for pre-training
         nn.init.xavier_uniform_(self.user_predictor.weight)
 
-    def pre_train_forward(self, user_items):
+    def pre_train_forward(self, user_items, user_ids=None):
         """ user individual preference encoder (excluding final layer) for user-item pre-training
             :param user_items: [B, G, I] or [B, I]
         """
@@ -40,7 +40,7 @@ class Encoder(nn.Module):
         logits = self.user_predictor(user_pref_embedding)  # [B, G, D] or [B, D]
         return logits, user_pref_embedding
 
-    def forward(self, user_items):
+    def forward(self, user_items, user_ids=None):
         """ user individual preference encoder
             :param user_items: [B, G, I]
         """
