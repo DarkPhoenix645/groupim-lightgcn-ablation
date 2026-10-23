@@ -23,9 +23,9 @@ def evaluate_user(model, eval_loader, device, mode='pretrain'):
             (users, fold_in_items, held_out_items) = eval_data
             fold_in_items = fold_in_items.to(device)
             if mode == 'pretrain':
-                recon_batch, emb = model.user_preference_encoder.pre_train_forward(fold_in_items)
+                recon_batch, emb = model.user_preference_encoder.pre_train_forward(fold_in_items, users)
             else:
-                recon_batch = model.group_predictor(model.user_preference_encoder(fold_in_items))
+                recon_batch = model.group_predictor(model.user_preference_encoder(fold_in_items, users))
 
             loss = model.multinomial_loss(recon_batch, held_out_items)
             eval_loss += loss.item()

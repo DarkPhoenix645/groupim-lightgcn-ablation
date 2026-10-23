@@ -4,6 +4,7 @@ import torch
 from models.aggregators import MaxPoolAggregator, AttentionAggregator, MeanPoolAggregator
 from models.discriminator import Discriminator
 from models.encoder import Encoder
+from models.lightgcn import LightGCNEncoder
 
 
 class GroupIM(nn.Module):
@@ -14,15 +15,26 @@ class GroupIM(nn.Module):
     (c) InfoMax Discriminator: discriminator
     """
 
-    def __init__(self, n_items, user_layers, lambda_mi=0.1, drop_ratio=0.4, aggregator_type='attention'):
+    def __init__(self, n_items, user_layers, lambda_mi=0.1, drop_ratio=0.4, aggregator_type='attention',
+                 encoder_type='mlp', n_layers=0, n_users=None, norm_adj=None):
         super(GroupIM, self).__init__()
         self.n_items = n_items
         self.lambda_mi = lambda_mi
         self.drop = nn.Dropout(drop_ratio)
         self.embedding_dim = user_layers[-1]
         self.aggregator_type = aggregator_type
+        self.encoder_type = encoder_type
 
-        self.user_preference_encoder = Encoder(self.n_items, user_layers, self.embedding_dim, drop_ratio)
+        if encoder_type == 'mlp':
+            self.user_preference_encoder = Encoder(self.n_items, user_layers, self.embedding_dim, drop_ratio)
+        elif encoder_type == 'lightgcn':
+            if n_users is None or norm_adj is None:
+                raise ValueError("LightGCN needs n_users and a normalized adjacency")
+            self.user_preference_encoder = LightGCNEncoder(
+                n_users, self.n_items, self.embedding_dim, n_layers, norm_adj
+            )
+        else:
+            raise ValueError(f"unknown encoder {encoder_type}")
 
         if self.aggregator_type == 'maxpool':
             self.preference_aggregator = MaxPoolAggregator(self.embedding_dim, self.embedding_dim)
@@ -54,12 +66,12 @@ class GroupIM(nn.Module):
         :param user_items: [B, G, I] individual item interactions of group members
 
         """
-        user_pref_embeds = self.user_preference_encoder(user_items)
+        user_pref_embeds = self.user_preference_encoder(user_items, group_users)
         group_embed = self.preference_aggregator(user_pref_embeds, group_mask, mlp=False)  # [B, D]
         group_logits = self.group_predictor(group_embed)  # [B, I]
 
         if self.train:
-            obs_user_embeds = self.user_preference_encoder(user_items)  # [B, G, D]
+            obs_user_embeds = self.user_preference_encoder(user_items, group_users)  # [B, G, D]
             scores_ug = self.discriminator(group_embed, obs_user_embeds, group_mask).detach()  # [B, G]
             return group_logits, group_embed, scores_ug
         else:
@@ -73,7 +85,7 @@ class GroupIM(nn.Module):
         return self.multinomial_loss(user_logits, user_items)
 
     def infomax_group_loss(self, group_logits, group_embeds, scores_ug, group_mask, group_items, user_items,
-                           corrupted_user_items, device='cpu'):
+                           corrupted_user_items, group_users, corrupted_users=None, device='cpu'):
         """ loss function with three terms: L_G, L_UG, L_MI
             :param group_logits: [B, G, I] group item predictions
             :param group_embeds: [B, D] group embedding
@@ -85,8 +97,8 @@ class GroupIM(nn.Module):
             :param device: cpu/gpu
         """
 
-        group_user_embeds = self.user_preference_encoder(user_items)  # [B, G, D]
-        corrupt_user_embeds = self.user_preference_encoder(corrupted_user_items)  # [B, N, D]
+        group_user_embeds = self.user_preference_encoder(user_items, group_users)  # [B, G, D]
+        corrupt_user_embeds = self.user_preference_encoder(corrupted_user_items, corrupted_users)  # [B, N, D]
 
         scores_observed = self.discriminator(group_embeds, group_user_embeds, group_mask)  # [B, G]
         scores_corrupted = self.discriminator(group_embeds, corrupt_user_embeds, group_mask)  # [B, N]
@@ -109,10 +121,11 @@ class GroupIM(nn.Module):
         return mi_loss, user_group_loss, group_loss
 
     def loss(self, group_logits, summary_embeds, scores_ug, group_mask, group_items, user_items, corrupted_user_items,
-             device='cpu'):
+             group_users, corrupted_users=None, device='cpu'):
         """ L_G + lambda L_UG + L_MI """
-        mi_loss, user_group_loss, group_loss = self.infomax_group_loss(group_logits, summary_embeds, scores_ug,
-                                                                       group_mask, group_items, user_items,
-                                                                       corrupted_user_items, device)
+        mi_loss, user_group_loss, group_loss = self.infomax_group_loss(
+            group_logits, summary_embeds, scores_ug, group_mask, group_items, user_items,
+            corrupted_user_items, group_users, corrupted_users, device
+        )
 
         return group_loss + mi_loss + self.lambda_mi * user_group_loss

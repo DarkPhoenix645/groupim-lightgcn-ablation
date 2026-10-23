@@ -26,6 +26,10 @@ Seed 1111's log starts at group epoch 91. Seeds 1112 and 1113 include epoch 1. T
 | [val-r50.svg](../../results/runs/6e836a908470f5f0/figures/val-r50.svg) | `6e836a908470f5f0` | Validation Recall@50 every eval epoch. Seed 1112. | Recall@50 |
 | [val-n100.svg](../../results/runs/6e836a908470f5f0/figures/val-n100.svg) | `6e836a908470f5f0` | Validation NDCG@100 every eval epoch. Seed 1112. | NDCG@100 |
 | [train-loss.svg](../../results/runs/6e836a908470f5f0/figures/train-loss.svg) | `6e836a908470f5f0` | Mean group-training loss each epoch. Seed 1112. | Mean train loss |
+| [val-r20.svg](../../results/runs/7d138136942c6110/figures/val-r20.svg) | `7d138136942c6110` | Validation Recall@20 every eval epoch. Seed 1111. | Recall@20 |
+| [val-r50.svg](../../results/runs/7d138136942c6110/figures/val-r50.svg) | `7d138136942c6110` | Validation Recall@50 every eval epoch. Seed 1111. | Recall@50 |
+| [val-n100.svg](../../results/runs/7d138136942c6110/figures/val-n100.svg) | `7d138136942c6110` | Validation NDCG@100 every eval epoch. Seed 1111. | NDCG@100 |
+| [train-loss.svg](../../results/runs/7d138136942c6110/figures/train-loss.svg) | `7d138136942c6110` | Mean group-training loss each epoch. Seed 1111. | Mean train loss |
 | [val-r20.svg](../../results/runs/8c545e92cb67730b/figures/val-r20.svg) | `8c545e92cb67730b` | Validation Recall@20 every eval epoch. Seed 1111. | Recall@20 |
 | [val-r50.svg](../../results/runs/8c545e92cb67730b/figures/val-r50.svg) | `8c545e92cb67730b` | Validation Recall@50 every eval epoch. Seed 1111. | Recall@50 |
 | [val-n100.svg](../../results/runs/8c545e92cb67730b/figures/val-n100.svg) | `8c545e92cb67730b` | Validation NDCG@100 every eval epoch. Seed 1111. | NDCG@100 |
@@ -68,6 +72,25 @@ Encoder `mlp`, aggregator `attention`, dataset `weeplaces`, seed 1112.
 | Metrics | [metrics.csv](../../results/runs/6e836a908470f5f0/metrics.csv) |
 
 Test N@20 0.5067, N@50 0.5302, R@20 0.6887, R@50 0.7793. Wall clock 7090.3 s.
+
+## `7d138136942c6110`
+
+Encoder `lightgcn`, aggregator `attention`, dataset `weeplaces`, seed 1111.
+
+| Field | Value |
+| --- | --- |
+| Losses | `full` |
+| λ | 1.0 |
+| K | 3 |
+| Embedding dim | 64 |
+| Epochs | 1 group, 1 user pretrain, 1 MI |
+| Pretrain | user True, MI True |
+| Tied item embeddings | True |
+| CUDA | True |
+| Log | [train.log](../../results/runs/7d138136942c6110/train.log) |
+| Metrics | [metrics.csv](../../results/runs/7d138136942c6110/metrics.csv) |
+
+Test N@20 0.1567, N@50 0.1820, R@20 0.2887, R@50 0.4016. Wall clock 88.3 s.
 
 ## `8c545e92cb67730b`
 

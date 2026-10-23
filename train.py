@@ -50,8 +50,6 @@ parser.add_argument('--save', type=str, default='', help='path to save the user 
 parser.add_argument('--save_group', type=str, default='', help='path to save the group model; default is <artifact-dir>/model_group.pt')
 
 args = parser.parse_args()
-if args.encoder != 'mlp':
-    raise SystemExit('The LightGCN encoder is not in this tree yet (issue #8).')
 if not args.artifact_dir:
     raise SystemExit('pass --artifact-dir; checkpoints and records go in the run directory')
 os.makedirs(args.artifact_dir, exist_ok=True)
@@ -116,8 +114,18 @@ test_group_loader = DataLoader(test_group_dataset, **eval_params)
 
 user_layers = [args.emb_size]  # user encoder layer configuration is tunable.
 
-model = GroupIM(n_items, user_layers, drop_ratio=args.drop_ratio, aggregator_type=args.aggregator,
-                lambda_mi=args.lambda_mi).to(device)
+if args.encoder == 'lightgcn':
+    from models.lightgcn import normalized_adjacency, read_foldin_edges
+    edge_users, edge_items, n_users_graph = read_foldin_edges(os.path.join('data', args.dataset), n_items)
+    norm_adj = normalized_adjacency(edge_users, edge_items, n_users_graph, n_items)
+    model = GroupIM(
+        n_items, user_layers, drop_ratio=args.drop_ratio, aggregator_type=args.aggregator,
+        lambda_mi=args.lambda_mi, encoder_type='lightgcn', n_layers=args.k,
+        n_users=n_users_graph, norm_adj=norm_adj,
+    ).to(device)
+else:
+    model = GroupIM(n_items, user_layers, drop_ratio=args.drop_ratio, aggregator_type=args.aggregator,
+                    lambda_mi=args.lambda_mi).to(device)
 optimizer_gr = torch.optim.Adam(model.parameters(), lr=args.lr, weight_decay=args.wd)
 
 best_user_n100, best_group_n100 = -np.inf, -np.inf
@@ -138,7 +146,7 @@ try:
                 optimizer_ur.zero_grad()
                 data = [x.to(device, non_blocking=True) for x in data]
                 (train_users, train_items) = data
-                user_logits, user_embeds = model.user_preference_encoder.pre_train_forward(train_items)
+                user_logits, user_embeds = model.user_preference_encoder.pre_train_forward(train_items, train_users)
                 user_loss = model.user_loss(user_logits, train_items)
                 user_loss.backward()
                 train_user_loss += user_loss.item()
@@ -175,13 +183,15 @@ try:
             mi_epoch_loss = 0.0
             for batch_index, data in enumerate(train_group_loader):
                 data = [x.to(device, non_blocking=True) for x in data]
-                group, group_users, group_mask, group_items, user_items, corrupted_user_items = data
+                group, group_users, group_mask, group_items, user_items, corrupted_user_items, corrupted_users = data
                 optimizer_gr.zero_grad()
                 model.zero_grad()
                 model.train()
                 _, group_embeds, _ = model(group, group_users, group_mask, user_items)
-                obs_user_embed = model.user_preference_encoder(user_items).detach()  # [B, G, D]
-                corrupted_user_embed = model.user_preference_encoder(corrupted_user_items).detach()  # [B, # negs, D]
+                obs_user_embed = model.user_preference_encoder(user_items, group_users).detach()  # [B, G, D]
+                corrupted_user_embed = model.user_preference_encoder(
+                    corrupted_user_items, corrupted_users
+                ).detach()  # [B, # negs, D]
 
                 scores_observed = model.discriminator(group_embeds, obs_user_embed, group_mask)  # [B, G]
                 scores_corrupted = model.discriminator(group_embeds, corrupted_user_embed, group_mask)  # [B, # negs]
@@ -203,12 +213,12 @@ try:
         train_group_epoch_loss = 0.0
         for batch_index, data in enumerate(train_group_loader):
             data = [x.to(device, non_blocking=True) for x in data]
-            group, group_users, group_mask, group_items, user_items, corrupted_user_items = data
+            group, group_users, group_mask, group_items, user_items, corrupted_user_items, corrupted_users = data
             optimizer_gr.zero_grad()
             model.zero_grad()
             group_logits, group_embeds, scores_ug = model(group.squeeze(), group_users, group_mask, user_items)
             group_loss = model.loss(group_logits, group_embeds, scores_ug, group_mask, group_items, user_items,
-                                    corrupted_user_items, device=device)
+                                    corrupted_user_items, group_users, corrupted_users, device=device)
             group_loss.backward()
             train_group_epoch_loss += group_loss.item()
             optimizer_gr.step()
@@ -280,7 +290,7 @@ with open(metrics_path, "a", newline="") as handle:
         writer.writeheader()
     writer.writerow({
         "dataset": args.dataset,
-        "encoder": "mlp",
+        "encoder": args.encoder,
         "aggregator": args.aggregator,
         "emb_size": args.emb_size,
         "seed": args.seed,
