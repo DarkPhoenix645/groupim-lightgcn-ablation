@@ -19,6 +19,7 @@ from groupim_lightgcn_ablation.run_record import (
     run_id,
     upsert_ledger,
 )
+from models.models import AGGREGATOR_CHOICES, LOSS_CHOICES
 
 REPO = Path(__file__).resolve().parents[2]
 RUNS = REPO / "results" / "runs"
@@ -31,8 +32,8 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--dataset", default="weeplaces")
     parser.add_argument("--encoder", choices=["mlp", "lightgcn"], default="mlp")
     parser.add_argument("--k", type=int, default=0, help="LightGCN layers. Ignored for the MLP encoder.")
-    parser.add_argument("--aggregator", choices=["maxpool", "meanpool", "attention"], default="attention")
-    parser.add_argument("--losses", choices=["full"], default="full")
+    parser.add_argument("--aggregator", choices=AGGREGATOR_CHOICES, default="attention")
+    parser.add_argument("--losses", choices=LOSS_CHOICES, default="full")
     parser.add_argument("--lambda-mi", type=float, default=1.0)
     parser.add_argument("--emb-size", type=int, default=64)
     parser.add_argument("--drop-ratio", type=float, default=0.4)

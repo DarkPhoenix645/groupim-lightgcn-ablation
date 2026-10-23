@@ -103,3 +103,41 @@ class AttentionAggregator(nn.Module):
             weight = torch.softmax(attention_out + mask.unsqueeze(2), dim=1)
         ret = torch.matmul(h.transpose(2, 1), weight).squeeze(2)
         return ret
+
+
+class UniformAggregator(nn.Module):
+    """Equal weight on every present member. No learned parameters."""
+
+    def __init__(self, input_dim, output_dim, drop_ratio=0):
+        super().__init__()
+
+    def forward(self, x, mask, mlp=False):
+        """ :param x: [B, G, D] member embeddings. :param mask: [B, G] -inf/0 for absent/present. """
+        if mask is None:
+            return torch.mean(x, dim=1)
+        present = torch.exp(mask)
+        weights = present / present.sum(1, keepdim=True).clamp(min=1)
+        return torch.sum(x * weights.unsqueeze(2), dim=1)
+
+
+class CosineAggregator(nn.Module):
+    """Weight members by cosine similarity to the masked mean of the member embeddings."""
+
+    def __init__(self, input_dim, output_dim, drop_ratio=0):
+        super().__init__()
+
+    def forward(self, x, mask, mlp=False):
+        """ :param x: [B, G, D] member embeddings. :param mask: [B, G] -inf/0 for absent/present. """
+        if mask is None:
+            present = torch.ones(x.shape[:2], device=x.device, dtype=x.dtype)
+            score_mask = 0
+        else:
+            present = torch.exp(mask)
+            score_mask = mask.unsqueeze(2)
+        denom = present.sum(1, keepdim=True).clamp(min=1)
+        prototype = torch.sum(x * present.unsqueeze(2), dim=1) / denom
+        member = torch.nn.functional.normalize(x, dim=-1)
+        center = torch.nn.functional.normalize(prototype, dim=-1).unsqueeze(1)
+        scores = (member * center).sum(-1, keepdim=True)
+        weight = torch.softmax(scores + score_mask, dim=1)
+        return torch.matmul(x.transpose(2, 1), weight).squeeze(2)
