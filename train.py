@@ -9,6 +9,7 @@ import torch
 from torch.utils.data import DataLoader
 
 from models.models import GroupIM
+from models.pretrain import seed_group_predictor, user_pretrain_loss, user_pretrain_parameters
 from utils.user_utils import TrainUserDataset, EvalUserDataset
 from utils.group_utils import TrainGroupDataset, EvalGroupDataset
 from eval.evaluate import evaluate_user, evaluate_group
@@ -134,7 +135,7 @@ print("args", args)
 # At any point you can hit Ctrl + C to break out of training early.
 try:
     if args.pretrain_user:
-        optimizer_ur = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=args.wd)
+        optimizer_ur = torch.optim.Adam(user_pretrain_parameters(model), lr=0.01, weight_decay=args.wd)
         print("Pre-training model on user-item interactions")
         for epoch in range(0, args.pretrain_epochs):
             epoch_start_time = time.time()
@@ -146,12 +147,11 @@ try:
                 optimizer_ur.zero_grad()
                 data = [x.to(device, non_blocking=True) for x in data]
                 (train_users, train_items) = data
-                user_logits, user_embeds = model.user_preference_encoder.pre_train_forward(train_items, train_users)
-                user_loss = model.user_loss(user_logits, train_items)
+                user_loss = user_pretrain_loss(model, train_users, train_items)
                 user_loss.backward()
                 train_user_loss += user_loss.item()
                 optimizer_ur.step()
-                del train_users, train_items, user_logits, user_embeds
+                del train_users, train_items, user_loss
             elapsed = time.time() - start_time
             print('| epoch {:3d} |  time {:4.2f} | loss {:4.2f}'.format(epoch + 1, elapsed,
                                                                         train_user_loss / len(train_loader)))
@@ -173,7 +173,7 @@ try:
         print("Initializing group recommender with pre-train user encoder")
         if args.tied_item_embeddings:
             # Initialize the group predictor (item embedding) weight based on the pre-trained user predictor.
-            model.group_predictor.weight.data = model.user_preference_encoder.user_predictor.weight.data
+            seed_group_predictor(model)
 
     if args.pretrain_mi:
         # pre-train MI estimator.
