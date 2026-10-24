@@ -2,7 +2,7 @@
 
 Canonical plan. Work is GitHub issue [#1](https://github.com/DarkPhoenix645/groupim-lightgcn-ablation/issues/1) and its sub-issues. Blocked-by links on those issues are the live gate (ADR-0006).
 
-**Hardware:** one RTX 3080 (10 GB). **Budget:** one full Weeplaces run is 2.0 GPU hours, measured on this card. The locked queue below is 94 GPU hours. One job was timed. A second Weeplaces job may share the card only after a paired run finishes.
+**Hardware:** one RTX 3080 (10 GB). **Budget:** one full Weeplaces run is 2.0 GPU hours, measured on this card. The locked queue below is 94 GPU hours. Two Weeplaces train loops fit together: a paired diagnostic held 9362 MiB of 10240, so not three. Group multi-hots are built on the GPU. The host copy was what pushed Windows memory up.
 
 **Reproduction:** [#3](https://github.com/DarkPhoenix645/groupim-lightgcn-ablation/issues/3) on the author Weeplaces files. That is the only Table 2 comparison (ADR-0008).
 
