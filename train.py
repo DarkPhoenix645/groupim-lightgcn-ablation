@@ -11,7 +11,12 @@ from torch.utils.data import DataLoader
 from models.models import AGGREGATOR_CHOICES, LOSS_CHOICES, GroupIM
 from models.pretrain import seed_group_predictor, user_pretrain_loss, user_pretrain_parameters
 from utils.user_utils import TrainUserDataset, EvalUserDataset
-from utils.group_utils import TrainGroupDataset, EvalGroupDataset
+from utils.group_utils import (
+    EvalGroupDataset,
+    TrainGroupDataset,
+    eval_group_collate,
+    train_group_collate,
+)
 from eval.evaluate import evaluate_user, evaluate_group
 
 parser = argparse.ArgumentParser(description='PyTorch GroupIM: Group Information Maximization for Group Recommendation')
@@ -80,9 +85,12 @@ if torch.cuda.is_available() and not args.cuda:
 
 # The author used 6 workers. On this WSL box that many workers densify group
 # batches and the OOM killer sends SIGKILL. The main process is enough.
+# User batches are one item-vector per user. Group batches are member-by-item
+# multi-hots; those are scattered on `device` so the host does not pin a copy.
 num_workers = 0
 train_params = {'batch_size': args.batch_size, 'shuffle': False, 'num_workers': num_workers, 'pin_memory': True}
 eval_params = {'batch_size': args.batch_size, 'shuffle': False, 'num_workers': num_workers, 'pin_memory': True}
+group_params = {'batch_size': args.batch_size, 'shuffle': False, 'num_workers': num_workers, 'pin_memory': False}
 device = torch.device("cuda" if args.cuda else "cpu")
 if args.cuda:
     free_bytes = [torch.cuda.mem_get_info(i)[0] for i in range(torch.cuda.device_count())]
@@ -106,9 +114,15 @@ val_loader = DataLoader(val_dataset, **eval_params)
 test_loader = DataLoader(test_dataset, **eval_params)
 
 # Define data loaders on group interactions.
-train_group_loader = DataLoader(train_group_dataset, **train_params)
-val_group_loader = DataLoader(val_group_dataset, **eval_params)
-test_group_loader = DataLoader(test_group_dataset, **eval_params)
+train_group_loader = DataLoader(
+    train_group_dataset, collate_fn=train_group_collate(train_group_dataset, device), **group_params,
+)
+val_group_loader = DataLoader(
+    val_group_dataset, collate_fn=eval_group_collate(val_group_dataset, device), **group_params,
+)
+test_group_loader = DataLoader(
+    test_group_dataset, collate_fn=eval_group_collate(test_group_dataset, device), **group_params,
+)
 
 ###############################################################################
 # Build the model
