@@ -231,7 +231,7 @@ data/*
 tmp
 tmp.*
 
-# Run outputs. Checkpoints stay in the run directory. Logs, metrics, figures, and models stay in.
+# Run outputs. Checkpoints stay on disk and out of git. Logs, metrics, and figures stay in.
 results/*
 !results/runs.csv
 !results/runs/
@@ -243,8 +243,6 @@ results/runs/*/*
 !results/runs/*/metrics.csv
 !results/runs/*/test_groups.csv
 !results/runs/*/member_scores.csv
-!results/runs/*/model_user.pt
-!results/runs/*/model_group.pt
 !results/runs/*/figures/
 results/runs/*/figures/*
 !results/runs/*/figures/*.svg
