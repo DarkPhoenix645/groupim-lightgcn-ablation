@@ -10,7 +10,7 @@ One config → exactly one results-CSV row. Same config+seed must be detectably 
 
 ## Concurrency
 
-2–3 jobs on the single RTX 3080 (10 GB). Outputs must not clobber.
+One job was timed. A full Weeplaces run takes 2.0 hours on the RTX 3080 (10 GB), for the MLP encoder and for LightGCN K=3. The locked queue is in [scope.md](scope.md). A second Weeplaces job may share the card only after a paired run finishes. Outputs must not clobber.
 
 ## Artifacts every run writes
 
