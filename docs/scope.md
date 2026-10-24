@@ -2,7 +2,7 @@
 
 Canonical plan. Work is GitHub issue [#1](https://github.com/DarkPhoenix645/groupim-lightgcn-ablation/issues/1) and its sub-issues. Blocked-by links on those issues are the live gate (ADR-0006).
 
-**Hardware:** one RTX 3080 (10 GB). **Budget:** the ~450 runs / 80–120 GPU hours figure was sized for a 4080; remeasure on this card before locking the grid. 2–3 concurrent jobs. Queue what fits and leave it overnight.
+**Hardware:** one RTX 3080 (10 GB). **Budget:** one full Weeplaces run is 2.0 GPU hours, measured on this card. The locked queue below is 94 GPU hours. One job was timed. A second Weeplaces job may share the card only after a paired run finishes.
 
 **Reproduction:** [#3](https://github.com/DarkPhoenix645/groupim-lightgcn-ablation/issues/3) on the author Weeplaces files. That is the only Table 2 comparison (ADR-0008).
 
@@ -43,14 +43,24 @@ Sub-issues of [#1](https://github.com/DarkPhoenix645/groupim-lightgcn-ablation/i
 | [22](https://github.com/DarkPhoenix645/groupim-lightgcn-ablation/issues/22) | Slides or demo if the course requires them | 21 |
 | [23](https://github.com/DarkPhoenix645/groupim-lightgcn-ablation/issues/23) | Clean repo: README, exact commands, results CSVs | 17 |
 
-## Experiment grid (once #11 is green)
+## Locked schedule (#11)
 
-Upper bound, not a commitment, until #11 records times on the 3080.
+Measured on one RTX 3080 (10 GB), one job, Weeplaces, author budget (100 user-pretrain epochs, 10 MI epochs, 200 group epochs, dim 64, batch 256, attention). MLP seeds 1111–1113 took 7,124 s, 7,090 s, and 7,216 s. LightGCN K=3 seed 1111 took 7,198 s (`613d5f01c0af8e14`). The unit for every full Weeplaces run below is **2.0 GPU hours**. K=1 and K=2 use that same unit: group eval epochs in the K=3 log stay near 36 s, the same as MLP.
 
-- **Main:** MLP vs LightGCN K∈{1,2,3} × {maxpool, meanpool, attention} × 3 seeds × 4 datasets (144). The Weeplaces slice is the comparison that can sit next to Table 2. The other three datasets are the variant track.
-- **Ablation:** 7 Table-3-style rows × MLP + best LightGCN × attention × 3 seeds × 4 datasets (168; reuse overlap with main).
-- **LightGCN extras:** pretrain on/off, dim {32,64,128}, tied item embeddings.
-- **λ:** 2^-4 … 2^6 for MLP and best LightGCN.
-- **Extra seeds:** 5–10 on headline pairs, smallest datasets first, leftover GPU only.
+Yelp, Gowalla, and Douban have no smoke on this card. Their full grids are outside this queue. A later 1-epoch smoke can spend leftover time on a variant. It does not extend the 94 hours.
 
-Weeplaces MLP attention baseline (seeds 1111–1113, mean ± sample std): N@20 0.509 ± 0.002, N@50 0.532 ± 0.002, R@20 0.693 ± 0.005, R@50 0.783 ± 0.004. Paper Table 2 targets: 0.521, 0.546, 0.716, 0.813. Detail: [dataset-notes/weeplaces.md](dataset-notes/weeplaces.md).
+Runs already on disk are reused. The three MLP attention seeds and the LightGCN K=3 attention seed 1111 are not trained again.
+
+| Ticket | What is queued | New runs | GPU hours |
+| --- | --- | ---: | ---: |
+| [#12](https://github.com/DarkPhoenix645/groupim-lightgcn-ablation/issues/12) | Weeplaces. MLP maxpool and meanpool × 3 seeds. LightGCN K∈{1,2,3} × {maxpool, meanpool, attention} × 3 seeds, except K=3 attention seed 1111. | 32 | 64 |
+| [#13](https://github.com/DarkPhoenix645/groupim-lightgcn-ablation/issues/13) | Weeplaces, attention, seed 1111. MLP and the best LightGCN K from #12. Six rows besides the full model: `L_G`, `L_G+λL_U`, `L_G+L_MI`, uniform weights, cosine-similarity weights, no pre-training. The full-model row is the #12 cell. | 12 | 24 |
+| [#14](https://github.com/DarkPhoenix645/groupim-lightgcn-ablation/issues/14) | Weeplaces, attention, seed 1111, best K. Dim 32, dim 128, tied item embeddings off. Dim 64, pretrain on, and pretrain off are the #12 full model and the #13 no-pre-training row. | 3 | 6 |
+| [#15](https://github.com/DarkPhoenix645/groupim-lightgcn-ablation/issues/15) | Leftover only, after the 94 hours. Weeplaces, seed 1111, MLP and best LightGCN, λ = 2^-4 … 2^6. λ = 1 is the full model. | 20 | 40 |
+| [#16](https://github.com/DarkPhoenix645/groupim-lightgcn-ablation/issues/16) | Not queued. | 0 | 0 |
+
+#13 and #14 start after #12 has picked the best LightGCN K on Weeplaces validation N@100. #13 also waits on the ablation switches ([#10](https://github.com/DarkPhoenix645/groupim-lightgcn-ablation/issues/10)).
+
+The 144-run four-dataset main grid, the 168-run ablation, three seeds on #13, and seeds 5–10 are the cuts this card forces. [#21](https://github.com/DarkPhoenix645/groupim-lightgcn-ablation/issues/21) records those cuts.
+
+Weeplaces MLP attention baseline (seeds 1111–1113, mean ± sample std): N@20 0.509 ± 0.002, N@50 0.532 ± 0.002, R@20 0.693 ± 0.005, R@50 0.783 ± 0.004. Paper Table 2 targets: 0.521, 0.546, 0.716, 0.813. The LightGCN timing seed is one run, K=3 attention: N@20 0.564, N@50 0.588, R@20 0.747, R@50 0.836. Detail: [dataset-notes/weeplaces.md](dataset-notes/weeplaces.md).

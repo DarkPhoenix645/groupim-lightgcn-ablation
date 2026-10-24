@@ -18,6 +18,10 @@ Seed 1111's log starts at group epoch 91. Seeds 1112 and 1113 include epoch 1. T
 
 | Figure | Run | Plotted | Y axis |
 | --- | --- | --- | --- |
+| [val-r20.svg](../../results/runs/613d5f01c0af8e14/figures/val-r20.svg) | `613d5f01c0af8e14` | Validation Recall@20 every eval epoch. Seed 1111. | Recall@20 |
+| [val-r50.svg](../../results/runs/613d5f01c0af8e14/figures/val-r50.svg) | `613d5f01c0af8e14` | Validation Recall@50 every eval epoch. Seed 1111. | Recall@50 |
+| [val-n100.svg](../../results/runs/613d5f01c0af8e14/figures/val-n100.svg) | `613d5f01c0af8e14` | Validation NDCG@100 every eval epoch. Seed 1111. | NDCG@100 |
+| [train-loss.svg](../../results/runs/613d5f01c0af8e14/figures/train-loss.svg) | `613d5f01c0af8e14` | Mean group-training loss each epoch. Seed 1111. | Mean train loss |
 | [val-r20.svg](../../results/runs/6e2bf78cbe14734e/figures/val-r20.svg) | `6e2bf78cbe14734e` | Validation Recall@20 every eval epoch. Seed 1113. | Recall@20 |
 | [val-r50.svg](../../results/runs/6e2bf78cbe14734e/figures/val-r50.svg) | `6e2bf78cbe14734e` | Validation Recall@50 every eval epoch. Seed 1113. | Recall@50 |
 | [val-n100.svg](../../results/runs/6e2bf78cbe14734e/figures/val-n100.svg) | `6e2bf78cbe14734e` | Validation NDCG@100 every eval epoch. Seed 1113. | NDCG@100 |
@@ -34,6 +38,25 @@ Seed 1111's log starts at group epoch 91. Seeds 1112 and 1113 include epoch 1. T
 | [val-r50.svg](../../results/runs/8c545e92cb67730b/figures/val-r50.svg) | `8c545e92cb67730b` | Validation Recall@50 every eval epoch. Seed 1111. | Recall@50 |
 | [val-n100.svg](../../results/runs/8c545e92cb67730b/figures/val-n100.svg) | `8c545e92cb67730b` | Validation NDCG@100 every eval epoch. Seed 1111. | NDCG@100 |
 | [train-loss.svg](../../results/runs/8c545e92cb67730b/figures/train-loss.svg) | `8c545e92cb67730b` | Mean group-training loss each epoch. Seed 1111. | Mean train loss |
+
+## `613d5f01c0af8e14`
+
+Encoder `lightgcn`, aggregator `attention`, dataset `weeplaces`, seed 1111.
+
+| Field | Value |
+| --- | --- |
+| Losses | `full` |
+| λ | 1.0 |
+| K | 3 |
+| Embedding dim | 64 |
+| Epochs | 200 group, 100 user pretrain, 10 MI |
+| Pretrain | user True, MI True |
+| Tied item embeddings | True |
+| CUDA | True |
+| Log | [train.log](../../results/runs/613d5f01c0af8e14/train.log) |
+| Metrics | [metrics.csv](../../results/runs/613d5f01c0af8e14/metrics.csv) |
+
+Test N@20 0.5640, N@50 0.5875, R@20 0.7466, R@50 0.8360. Wall clock 7197.9 s.
 
 ## `6e2bf78cbe14734e`
 
