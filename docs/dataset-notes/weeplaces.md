@@ -42,3 +42,9 @@ These are the MLP baseline for later tables. The gap to Table 2 is small and sta
 Wall clock was 7,124 s, 7,090 s, and 7,216 s.
 
 Validation curves and the group train loss are in [figures/catalog.md](../figures/catalog.md). Seed 1111's text log starts at group epoch 91. Seeds 1112 and 1113 are complete.
+
+## LightGCN K=3 attention timing run
+
+Same author budget as the MLP baseline. Seed 1111 is run `613d5f01c0af8e14`. Wall clock 7,198 s. That is the LightGCN time-per-run in the locked schedule ([scope.md](../scope.md)).
+
+Test metrics for this seed: N@20 0.564, N@50 0.588, R@20 0.747, R@50 0.836. The MLP vs LightGCN comparison is the #12 Weeplaces slice, after the other seeds, layers, and aggregators.
