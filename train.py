@@ -8,7 +8,7 @@ import numpy as np
 import torch
 from torch.utils.data import DataLoader
 
-from models.models import GroupIM
+from models.models import AGGREGATOR_CHOICES, LOSS_CHOICES, GroupIM
 from models.pretrain import seed_group_predictor, user_pretrain_loss, user_pretrain_parameters
 from utils.user_utils import TrainUserDataset, EvalUserDataset
 from utils.group_utils import TrainGroupDataset, EvalGroupDataset
@@ -29,7 +29,7 @@ parser.add_argument('--eval_freq', type=int, default=5, help='frequency to evalu
 # Model settings.
 parser.add_argument('--emb_size', type=int, default=64, help='layer size')
 parser.add_argument('--aggregator', type=str, default='attention', help='choice of group preference aggregator',
-                    choices=['maxpool', 'meanpool', 'attention'])
+                    choices=AGGREGATOR_CHOICES)
 parser.add_argument('--negs_per_group', type=int, default=5, help='# negative users sampled per group')
 
 # Pre-training settings.
@@ -41,7 +41,8 @@ parser.add_argument('--cuda', action='store_true', help='use CUDA')
 parser.add_argument('--seed', type=int, default=1111, help='random seed for reproducibility')
 parser.add_argument('--encoder', choices=['mlp', 'lightgcn'], default='mlp')
 parser.add_argument('--k', type=int, default=0, help='LightGCN layers. Ignored for the MLP encoder.')
-parser.add_argument('--losses', choices=['full'], default='full', help='full is L_G + λ L_U + L_MI')
+parser.add_argument('--losses', choices=LOSS_CHOICES, default='full',
+                    help='lg is L_G; lg+lu adds λ L_U; lg+lmi adds L_MI; full is all three')
 parser.add_argument('--mi-epochs', type=int, default=10, help='MI pretrain epochs')
 parser.add_argument('--tied-item-embeddings', action=argparse.BooleanOptionalAction, default=True)
 parser.add_argument('--artifact-dir', type=str, default='', help='Write per-group test records here')
@@ -122,11 +123,11 @@ if args.encoder == 'lightgcn':
     model = GroupIM(
         n_items, user_layers, drop_ratio=args.drop_ratio, aggregator_type=args.aggregator,
         lambda_mi=args.lambda_mi, encoder_type='lightgcn', n_layers=args.k,
-        n_users=n_users_graph, norm_adj=norm_adj,
+        n_users=n_users_graph, norm_adj=norm_adj, losses=args.losses,
     ).to(device)
 else:
     model = GroupIM(n_items, user_layers, drop_ratio=args.drop_ratio, aggregator_type=args.aggregator,
-                    lambda_mi=args.lambda_mi).to(device)
+                    lambda_mi=args.lambda_mi, losses=args.losses).to(device)
 optimizer_gr = torch.optim.Adam(model.parameters(), lr=args.lr, weight_decay=args.wd)
 
 best_user_n100, best_group_n100 = -np.inf, -np.inf
@@ -283,7 +284,7 @@ metrics_path = os.path.join(os.path.dirname(args.save_group) or ".", "metrics.cs
 wrote_header = not os.path.exists(metrics_path)
 with open(metrics_path, "a", newline="") as handle:
     writer = csv.DictWriter(handle, fieldnames=[
-        "dataset", "encoder", "aggregator", "emb_size", "seed", "pretrain_user", "pretrain_mi",
+        "dataset", "encoder", "aggregator", "losses", "emb_size", "seed", "pretrain_user", "pretrain_mi",
         "epochs", "pretrain_epochs", "n20", "n50", "r20", "r50", "n100", "seconds",
     ])
     if wrote_header:
@@ -292,6 +293,7 @@ with open(metrics_path, "a", newline="") as handle:
         "dataset": args.dataset,
         "encoder": args.encoder,
         "aggregator": args.aggregator,
+        "losses": args.losses,
         "emb_size": args.emb_size,
         "seed": args.seed,
         "pretrain_user": int(args.pretrain_user),

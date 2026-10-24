@@ -7,7 +7,6 @@ config and seed always produce the same id, so a repeat is the same row.
 from __future__ import annotations
 
 import csv
-import fcntl
 import json
 from pathlib import Path
 
@@ -77,7 +76,12 @@ def upsert_ledger(path: Path, row: dict) -> int:
     path.parent.mkdir(parents=True, exist_ok=True)
     lock_path = path.with_suffix(path.suffix + ".lock")
     with lock_path.open("a+") as lock:
-        fcntl.flock(lock.fileno(), fcntl.LOCK_EX)
+        try:
+            import fcntl
+        except ImportError:  # Windows has no flock; the GPU box is Linux.
+            fcntl = None
+        if fcntl is not None:
+            fcntl.flock(lock.fileno(), fcntl.LOCK_EX)
         existing: list[dict[str, str]] = []
         if path.is_file() and path.stat().st_size:
             with path.open(newline="") as handle:
@@ -97,7 +101,8 @@ def upsert_ledger(path: Path, row: dict) -> int:
             writer = csv.DictWriter(handle, fieldnames=list(LEDGER_FIELDS))
             writer.writeheader()
             writer.writerows(existing)
-        fcntl.flock(lock.fileno(), fcntl.LOCK_UN)
+        if fcntl is not None:
+            fcntl.flock(lock.fileno(), fcntl.LOCK_UN)
     return writes
 
 

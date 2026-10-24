@@ -4,7 +4,7 @@ How a run is identified and what it must leave on disk. ADR-0007.
 
 ## Run config (minimum)
 
-encoder (`mlp` | `lightgcn`), `K` (LightGCN layers; ignored for MLP), aggregator (`maxpool` | `meanpool` | `attention`), losses (`L_G` / `+λL_U` / `+L_MI`), λ, embedding dim, pretrain_user, pretrain_mi, tied item embeddings, dataset, seed.
+encoder (`mlp` | `lightgcn`), `K` (LightGCN layers; ignored for MLP), aggregator (`maxpool` | `meanpool` | `attention` | `uniform` | `cosine`), losses (`lg` | `lg+lu` | `lg+lmi` | `full`), λ (`lambda_mi`), embedding dim, pretrain_user, pretrain_mi, tied item embeddings, dataset, seed.
 
 One config → exactly one results-CSV row. Same config+seed must be detectably identical in the CSV.
 
@@ -28,3 +28,5 @@ Coherence on a test group is the mean pairwise Pearson correlation of its member
 `encoder=lightgcn` swaps only the user preference encoder. K is the number of propagation layers. The readout is the mean of the initial ID embeddings and the K propagated layers. The adjacency is the symmetric normalized bipartite graph of `train_ui` plus `val_ui_tr` and `test_ui_tr`. Held-out user-item files are not edges. Propagation runs once per forward from the current embeddings.
 
 `--pretrain_user` is the same stage for both encoders: optimize `L_U` on user-item pairs, then print validation user NDCG and recall before group training starts. LightGCN updates the encoder ID embeddings only. Validation and test user ids passed into that evaluation are the ids in the CSVs, so the recall is for those users rather than the first rows of the embedding table. With tied item embeddings, the group predictor is then assigned from `user_predictor.weight`, which is the author assignment and, for LightGCN, the pretrained item embedding.
+
+The seven Table 3 rows are configs of those fields, for either encoder. `lg` is group loss `L_G` only. `lg+lu` adds `λ L_U`. `lg+lmi` adds `L_MI`. `full` is `L_G + λ L_U + L_MI`. `λ` is `lambda_mi`. `uniform` gives every present member the same weight. `cosine` weights members by cosine similarity to the masked mean of the member embeddings and has no learned parameters. No pretraining is `pretrain_user` and `pretrain_mi` both false. The full model is `losses=full`, `aggregator=attention`, and both pretraining flags true.

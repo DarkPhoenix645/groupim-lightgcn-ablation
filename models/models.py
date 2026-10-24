@@ -1,7 +1,16 @@
 import torch.nn as nn
 import torch.nn.functional as F
 import torch
-from models.aggregators import MaxPoolAggregator, AttentionAggregator, MeanPoolAggregator
+from models.aggregators import (
+    AttentionAggregator,
+    CosineAggregator,
+    MaxPoolAggregator,
+    MeanPoolAggregator,
+    UniformAggregator,
+)
+
+AGGREGATOR_CHOICES = ("maxpool", "meanpool", "attention", "uniform", "cosine")
+LOSS_CHOICES = ("lg", "lg+lu", "lg+lmi", "full")
 from models.discriminator import Discriminator
 from models.encoder import Encoder
 from models.lightgcn import LightGCNEncoder
@@ -16,7 +25,7 @@ class GroupIM(nn.Module):
     """
 
     def __init__(self, n_items, user_layers, lambda_mi=0.1, drop_ratio=0.4, aggregator_type='attention',
-                 encoder_type='mlp', n_layers=0, n_users=None, norm_adj=None):
+                 encoder_type='mlp', n_layers=0, n_users=None, norm_adj=None, losses='full'):
         super(GroupIM, self).__init__()
         self.n_items = n_items
         self.lambda_mi = lambda_mi
@@ -24,6 +33,9 @@ class GroupIM(nn.Module):
         self.embedding_dim = user_layers[-1]
         self.aggregator_type = aggregator_type
         self.encoder_type = encoder_type
+        if losses not in LOSS_CHOICES:
+            raise ValueError(f"unknown losses {losses}")
+        self.losses = losses
 
         if encoder_type == 'mlp':
             self.user_preference_encoder = Encoder(self.n_items, user_layers, self.embedding_dim, drop_ratio)
@@ -42,6 +54,10 @@ class GroupIM(nn.Module):
             self.preference_aggregator = MeanPoolAggregator(self.embedding_dim, self.embedding_dim)
         elif self.aggregator_type == 'attention':
             self.preference_aggregator = AttentionAggregator(self.embedding_dim, self.embedding_dim)
+        elif self.aggregator_type == 'uniform':
+            self.preference_aggregator = UniformAggregator(self.embedding_dim, self.embedding_dim)
+        elif self.aggregator_type == 'cosine':
+            self.preference_aggregator = CosineAggregator(self.embedding_dim, self.embedding_dim)
         else:
             raise NotImplementedError("Aggregator type {} not implemented ".format(self.aggregator_type))
 
@@ -122,10 +138,14 @@ class GroupIM(nn.Module):
 
     def loss(self, group_logits, summary_embeds, scores_ug, group_mask, group_items, user_items, corrupted_user_items,
              group_users, corrupted_users=None, device='cpu'):
-        """ L_G + lambda L_UG + L_MI """
+        """ L_G, plus λ L_U and L_MI when the losses config includes them. λ is lambda_mi. """
         mi_loss, user_group_loss, group_loss = self.infomax_group_loss(
             group_logits, summary_embeds, scores_ug, group_mask, group_items, user_items,
             corrupted_user_items, group_users, corrupted_users, device
         )
-
-        return group_loss + mi_loss + self.lambda_mi * user_group_loss
+        total = group_loss
+        if self.losses in ("lg+lu", "full"):
+            total = total + self.lambda_mi * user_group_loss
+        if self.losses in ("lg+lmi", "full"):
+            total = total + mi_loss
+        return total

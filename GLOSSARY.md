@@ -29,7 +29,7 @@ Neural group recommendation: predict items a **group** of **users** will like, u
 | **User preference encoder** | Maps a user's item history to a user embedding. The baseline is an MLP; the treatment is LightGCN. | |
 | **MLP encoder** | The author GroupIM user encoder: a feed-forward net over the user's item vector. | Original encoder, vanilla encoder |
 | **LightGCN encoder** | User encoder of ID embeddings propagated over the user-item graph for K layers, then the mean of the layer outputs. | GCN, NGCF, graph encoder (too generic) |
-| **Aggregator** | How member embeddings become one group embedding. Canonical choices: `maxpool`, `meanpool`, `attention`. | Pooling, combiner, group encoder |
+| **Aggregator** | How member embeddings become one group embedding. Choices: `maxpool`, `meanpool`, `attention`, `uniform`, `cosine`. | Pooling, combiner, group encoder |
 | **Uniform weights** | Aggregator that gives every member the same weight. | |
 | **Cosine-similarity weights** | Aggregator that weights members by cosine similarity rather than learned attention. | |
 | **Discriminator** | Network that scores agreement between a group embedding and a member embedding for mutual information. | Critic, MI head |
