@@ -1,0 +1,23 @@
+{
+  "aggregator": "maxpool",
+  "batch_size": 256,
+  "cuda": true,
+  "dataset": "weeplaces",
+  "drop_ratio": 0.4,
+  "emb_size": 64,
+  "encoder": "lightgcn",
+  "epochs": 200,
+  "eval_freq": 5,
+  "k": 2,
+  "lambda_mi": 1.0,
+  "losses": "full",
+  "lr": 0.005,
+  "mi_epochs": 10,
+  "negs_per_group": 5,
+  "pretrain_epochs": 100,
+  "pretrain_mi": true,
+  "pretrain_user": true,
+  "seed": 1113,
+  "tied_item_embeddings": true,
+  "wd": 0.0
+}
