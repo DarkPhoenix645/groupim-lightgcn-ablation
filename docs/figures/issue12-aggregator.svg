@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="440" viewBox="0 0 920 440">
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="56" y="26" font-family="sans-serif" font-size="16" fill="#111827">Test N@20 by encoder and aggregator</text>
+<line x1="56" y1="352.0" x2="904" y2="352.0" stroke="#e5e7eb"/>
+<text x="48" y="356.0" text-anchor="end" font-family="sans-serif" font-size="11" fill="#6b7280">0.0</text>
+<line x1="56" y1="289.6" x2="904" y2="289.6" stroke="#e5e7eb"/>
+<text x="48" y="293.6" text-anchor="end" font-family="sans-serif" font-size="11" fill="#6b7280">0.2</text>
+<line x1="56" y1="227.2" x2="904" y2="227.2" stroke="#e5e7eb"/>
+<text x="48" y="231.2" text-anchor="end" font-family="sans-serif" font-size="11" fill="#6b7280">0.4</text>
+<line x1="56" y1="164.8" x2="904" y2="164.8" stroke="#e5e7eb"/>
+<text x="48" y="168.8" text-anchor="end" font-family="sans-serif" font-size="11" fill="#6b7280">0.6</text>
+<line x1="56" y1="102.4" x2="904" y2="102.4" stroke="#e5e7eb"/>
+<text x="48" y="106.4" text-anchor="end" font-family="sans-serif" font-size="11" fill="#6b7280">0.8</text>
+<line x1="56" y1="40.0" x2="904" y2="40.0" stroke="#e5e7eb"/>
+<text x="48" y="44.0" text-anchor="end" font-family="sans-serif" font-size="11" fill="#6b7280">1.0</text>
+<line x1="56" y1="40" x2="56" y2="352" stroke="#111827"/>
+<line x1="56" y1="352" x2="904" y2="352" stroke="#111827"/>
+<text x="162.0" y="388" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#374151">MLP</text>
+<rect x="86.7" y="193.3" width="48.9" height="158.7" fill="#1d4e89"/>
+<rect x="137.6" y="193.2" width="48.9" height="158.8" fill="#10b981"/>
+<rect x="188.4" y="207.3" width="48.9" height="144.7" fill="#ef4444"/>
+<text x="374.0" y="388" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#374151">LGN K=1</text>
+<rect x="298.7" y="177.0" width="48.9" height="175.0" fill="#1d4e89"/>
+<rect x="349.6" y="177.3" width="48.9" height="174.7" fill="#10b981"/>
+<rect x="400.4" y="189.8" width="48.9" height="162.2" fill="#ef4444"/>
+<text x="586.0" y="388" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#374151">LGN K=2</text>
+<rect x="510.7" y="175.7" width="48.9" height="176.3" fill="#1d4e89"/>
+<rect x="561.6" y="176.3" width="48.9" height="175.7" fill="#10b981"/>
+<rect x="612.4" y="187.9" width="48.9" height="164.1" fill="#ef4444"/>
+<text x="798.0" y="388" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#374151">LGN K=3</text>
+<rect x="722.7" y="176.2" width="48.9" height="175.8" fill="#1d4e89"/>
+<rect x="773.6" y="176.9" width="48.9" height="175.1" fill="#10b981"/>
+<rect x="824.4" y="188.1" width="48.9" height="163.9" fill="#ef4444"/>
+<line x1="56" y1="189.4" x2="904" y2="189.4" stroke="#000000" stroke-width="2" stroke-dasharray="8 6" fill="none"/>
+<text x="900" y="183.4" text-anchor="end" font-family="sans-serif" font-size="11" fill="#000000">MLP base 0.521</text>
+<text x="16" y="196.0" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#374151" transform="rotate(-90 16 196.0)">NDCG@20</text>
+<rect x="56" y="412" width="12" height="12" fill="#1d4e89"/>
+<text x="72" y="422" font-family="sans-serif" font-size="12" fill="#374151">attention</text>
+<rect x="164" y="412" width="12" height="12" fill="#10b981"/>
+<text x="180" y="422" font-family="sans-serif" font-size="12" fill="#374151">meanpool</text>
+<rect x="264" y="412" width="12" height="12" fill="#ef4444"/>
+<text x="280" y="422" font-family="sans-serif" font-size="12" fill="#374151">maxpool</text>
+</svg>

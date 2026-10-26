@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="860" height="420" viewBox="0 0 860 420">
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="64" y="22" font-family="sans-serif" font-size="16" fill="#111827">weeplaces validation Recall@50, seed 1113</text>
+<line x1="64.0" y1="36" x2="64.0" y2="372" stroke="#e5e7eb"/>
+<text x="64.0" y="402" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#6b7280">1</text>
+<line x1="215.3" y1="36" x2="215.3" y2="372" stroke="#e5e7eb"/>
+<text x="215.3" y="402" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#6b7280">40</text>
+<line x1="370.5" y1="36" x2="370.5" y2="372" stroke="#e5e7eb"/>
+<text x="370.5" y="402" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#6b7280">80</text>
+<line x1="525.6" y1="36" x2="525.6" y2="372" stroke="#e5e7eb"/>
+<text x="525.6" y="402" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#6b7280">120</text>
+<line x1="680.8" y1="36" x2="680.8" y2="372" stroke="#e5e7eb"/>
+<text x="680.8" y="402" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#6b7280">160</text>
+<line x1="836.0" y1="36" x2="836.0" y2="372" stroke="#e5e7eb"/>
+<text x="836.0" y="402" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#6b7280">200</text>
+<line x1="64" y1="372.0" x2="836" y2="372.0" stroke="#e5e7eb"/>
+<text x="56" y="376.0" text-anchor="end" font-family="sans-serif" font-size="11" fill="#6b7280">0.62</text>
+<line x1="64" y1="304.8" x2="836" y2="304.8" stroke="#e5e7eb"/>
+<text x="56" y="308.8" text-anchor="end" font-family="sans-serif" font-size="11" fill="#6b7280">0.66</text>
+<line x1="64" y1="237.6" x2="836" y2="237.6" stroke="#e5e7eb"/>
+<text x="56" y="241.6" text-anchor="end" font-family="sans-serif" font-size="11" fill="#6b7280">0.71</text>
+<line x1="64" y1="170.4" x2="836" y2="170.4" stroke="#e5e7eb"/>
+<text x="56" y="174.4" text-anchor="end" font-family="sans-serif" font-size="11" fill="#6b7280">0.75</text>
+<line x1="64" y1="103.2" x2="836" y2="103.2" stroke="#e5e7eb"/>
+<text x="56" y="107.2" text-anchor="end" font-family="sans-serif" font-size="11" fill="#6b7280">0.79</text>
+<line x1="64" y1="36.0" x2="836" y2="36.0" stroke="#e5e7eb"/>
+<text x="56" y="40.0" text-anchor="end" font-family="sans-serif" font-size="11" fill="#6b7280">0.83</text>
+<line x1="64" y1="36" x2="64" y2="372" stroke="#111827"/>
+<line x1="64" y1="372" x2="836" y2="372" stroke="#111827"/>
+<text x="450.0" y="416" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#374151">Group-training epoch</text>
+<text x="16" y="204.0" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#374151" transform="rotate(-90 16 204.0)">Recall@50</text>
+<line x1="64" y1="68.4" x2="836" y2="68.4" stroke="#9ca3af" stroke-dasharray="4 4"/>
+<text x="832" y="64.4" text-anchor="end" font-family="sans-serif" font-size="11" fill="#6b7280">paper test R@50 0.813</text>
+<polyline fill="none" stroke="#1d4e89" stroke-width="2" points="64.0,348.83 83.4,94.93 102.8,62.94 122.2,64.50 141.6,59.17 161.0,60.43 180.4,66.23 199.8,67.01 219.2,69.68 238.6,66.39 258.0,73.91 277.4,73.44 296.8,72.97 316.2,75.80 335.6,76.58 355.0,75.80 374.4,76.74 393.7,81.91 413.1,80.97 432.5,80.66 451.9,83.17 471.3,89.91 490.7,86.30 510.1,88.50 529.5,85.99 548.9,89.60 568.3,91.01 587.7,89.75 607.1,93.52 626.5,92.26 645.9,94.46 665.3,92.73 684.7,90.22 704.1,96.34 723.5,93.99 742.9,95.71 762.3,99.32 781.7,97.91 801.1,105.91 820.5,103.40"/>
+</svg>

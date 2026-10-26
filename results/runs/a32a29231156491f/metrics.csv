@@ -1,0 +1,2 @@
+dataset,encoder,aggregator,losses,emb_size,seed,pretrain_user,pretrain_mi,epochs,pretrain_epochs,n20,n50,r20,r50,n100,seconds
+weeplaces,lightgcn,attention,full,64,1112,1,1,200,100,0.5637127161026001,0.5865029692649841,0.748952329158783,0.8349978923797607,0.5982009172439575,5011.6

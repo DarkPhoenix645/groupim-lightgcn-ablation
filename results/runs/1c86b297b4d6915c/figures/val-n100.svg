@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="860" height="420" viewBox="0 0 860 420">
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="64" y="22" font-family="sans-serif" font-size="16" fill="#111827">weeplaces validation NDCG@100, seed 1111</text>
+<line x1="64.0" y1="36" x2="64.0" y2="372" stroke="#e5e7eb"/>
+<text x="64.0" y="402" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#6b7280">1</text>
+<line x1="215.3" y1="36" x2="215.3" y2="372" stroke="#e5e7eb"/>
+<text x="215.3" y="402" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#6b7280">40</text>
+<line x1="370.5" y1="36" x2="370.5" y2="372" stroke="#e5e7eb"/>
+<text x="370.5" y="402" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#6b7280">80</text>
+<line x1="525.6" y1="36" x2="525.6" y2="372" stroke="#e5e7eb"/>
+<text x="525.6" y="402" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#6b7280">120</text>
+<line x1="680.8" y1="36" x2="680.8" y2="372" stroke="#e5e7eb"/>
+<text x="680.8" y="402" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#6b7280">160</text>
+<line x1="836.0" y1="36" x2="836.0" y2="372" stroke="#e5e7eb"/>
+<text x="836.0" y="402" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#6b7280">200</text>
+<line x1="64" y1="372.0" x2="836" y2="372.0" stroke="#e5e7eb"/>
+<text x="56" y="376.0" text-anchor="end" font-family="sans-serif" font-size="11" fill="#6b7280">0.18</text>
+<line x1="64" y1="304.8" x2="836" y2="304.8" stroke="#e5e7eb"/>
+<text x="56" y="308.8" text-anchor="end" font-family="sans-serif" font-size="11" fill="#6b7280">0.27</text>
+<line x1="64" y1="237.6" x2="836" y2="237.6" stroke="#e5e7eb"/>
+<text x="56" y="241.6" text-anchor="end" font-family="sans-serif" font-size="11" fill="#6b7280">0.36</text>
+<line x1="64" y1="170.4" x2="836" y2="170.4" stroke="#e5e7eb"/>
+<text x="56" y="174.4" text-anchor="end" font-family="sans-serif" font-size="11" fill="#6b7280">0.45</text>
+<line x1="64" y1="103.2" x2="836" y2="103.2" stroke="#e5e7eb"/>
+<text x="56" y="107.2" text-anchor="end" font-family="sans-serif" font-size="11" fill="#6b7280">0.53</text>
+<line x1="64" y1="36.0" x2="836" y2="36.0" stroke="#e5e7eb"/>
+<text x="56" y="40.0" text-anchor="end" font-family="sans-serif" font-size="11" fill="#6b7280">0.62</text>
+<line x1="64" y1="36" x2="64" y2="372" stroke="#111827"/>
+<line x1="64" y1="372" x2="836" y2="372" stroke="#111827"/>
+<text x="450.0" y="416" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#374151">Group-training epoch</text>
+<text x="16" y="204.0" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#374151" transform="rotate(-90 16 204.0)">NDCG@100</text>
+<polyline fill="none" stroke="#1d4e89" stroke-width="2" points="64.0,348.83 83.4,170.59 102.8,125.08 122.2,105.06 141.6,89.89 161.0,80.18 180.4,73.05 199.8,69.18 219.2,65.92 238.6,64.10 258.0,62.13 277.4,62.36 296.8,60.61 316.2,60.84 335.6,60.23 355.0,60.39 374.4,59.70 393.7,59.17 413.1,59.40 432.5,59.25 451.9,60.61 471.3,60.77 490.7,61.83 510.1,62.36 529.5,61.07 548.9,61.07 568.3,61.90 587.7,61.52 607.1,62.36 626.5,62.43 645.9,62.51 665.3,61.22 684.7,61.52 704.1,62.36 723.5,61.60 742.9,62.59 762.3,62.96 781.7,63.65 801.1,63.12 820.5,63.95"/>
+</svg>

@@ -47,4 +47,27 @@ Validation curves and the group train loss are in [figures/catalog.md](../figure
 
 Same author budget as the MLP baseline. Seed 1111 is run `613d5f01c0af8e14`. Wall clock 7,198 s. That is the LightGCN time-per-run in the locked schedule ([scope.md](../scope.md)).
 
-Test metrics for this seed: N@20 0.564, N@50 0.588, R@20 0.747, R@50 0.836. The MLP vs LightGCN comparison is the #12 Weeplaces slice, after the other seeds, layers, and aggregators.
+Test metrics for this seed: N@20 0.564, N@50 0.588, R@20 0.747, R@50 0.836.
+
+## #12 Weeplaces grid
+
+Author budget, three seeds, `losses=full`. MLP maxpool and meanpool plus LightGCN K∈{1,2,3} × {attention, meanpool, maxpool}. The four earlier full runs are reused. Best LightGCN K is **1**: mean of each attention seed's max validation group N@100 is K=1 0.6007, K=3 0.5999, K=2 0.5966. Test N@20 ranks K=2 first (0.565) then K=3 (0.563) then K=1 (0.561); that is not the selection rule.
+
+Test mean ± sample std (n=3):
+
+| Encoder | Agg | N@20 | N@50 | R@20 | R@50 |
+| --- | --- | ---: | ---: | ---: | ---: |
+| MLP | attention | 0.5086 ± 0.0017 | 0.5321 ± 0.0017 | 0.6930 ± 0.0046 | 0.7834 ± 0.0042 |
+| MLP | meanpool | 0.5090 ± 0.0023 | 0.5329 ± 0.0021 | 0.6918 ± 0.0043 | 0.7844 ± 0.0049 |
+| MLP | maxpool | 0.4636 ± 0.0043 | 0.4889 ± 0.0047 | 0.6448 ± 0.0027 | 0.7450 ± 0.0033 |
+| LightGCN K=1 | attention | 0.5610 ± 0.0031 | 0.5838 ± 0.0027 | 0.7493 ± 0.0027 | 0.8352 ± 0.0036 |
+| LightGCN K=1 | meanpool | 0.5599 ± 0.0011 | 0.5833 ± 0.0004 | 0.7434 ± 0.0031 | 0.8322 ± 0.0030 |
+| LightGCN K=1 | maxpool | 0.5198 ± 0.0036 | 0.5446 ± 0.0030 | 0.7031 ± 0.0057 | 0.7982 ± 0.0084 |
+| LightGCN K=2 | attention | 0.5651 ± 0.0011 | 0.5881 ± 0.0011 | 0.7489 ± 0.0046 | 0.8365 ± 0.0040 |
+| LightGCN K=2 | meanpool | 0.5632 ± 0.0014 | 0.5855 ± 0.0014 | 0.7477 ± 0.0013 | 0.8308 ± 0.0022 |
+| LightGCN K=2 | maxpool | 0.5260 ± 0.0024 | 0.5502 ± 0.0024 | 0.7087 ± 0.0015 | 0.8014 ± 0.0036 |
+| LightGCN K=3 | attention | 0.5635 ± 0.0007 | 0.5864 ± 0.0011 | 0.7477 ± 0.0012 | 0.8346 ± 0.0016 |
+| LightGCN K=3 | meanpool | 0.5613 ± 0.0028 | 0.5846 ± 0.0026 | 0.7447 ± 0.0039 | 0.8323 ± 0.0030 |
+| LightGCN K=3 | maxpool | 0.5254 ± 0.0022 | 0.5501 ± 0.0016 | 0.7032 ± 0.0008 | 0.7985 ± 0.0052 |
+
+Summary figures: [issue12-n20-grid.svg](../figures/issue12-n20-grid.svg), [issue12-k-select.svg](../figures/issue12-k-select.svg), [issue12-encoder.svg](../figures/issue12-encoder.svg), [issue12-aggregator.svg](../figures/issue12-aggregator.svg).

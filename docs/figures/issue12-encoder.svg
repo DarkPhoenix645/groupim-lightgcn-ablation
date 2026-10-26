@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="440" viewBox="0 0 920 440">
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="56" y="26" font-family="sans-serif" font-size="16" fill="#111827">Attention, 3 seeds: MLP vs LightGCN K=1 (best K by val N@100)</text>
+<line x1="56" y1="352.0" x2="904" y2="352.0" stroke="#e5e7eb"/>
+<text x="48" y="356.0" text-anchor="end" font-family="sans-serif" font-size="11" fill="#6b7280">0.0</text>
+<line x1="56" y1="289.6" x2="904" y2="289.6" stroke="#e5e7eb"/>
+<text x="48" y="293.6" text-anchor="end" font-family="sans-serif" font-size="11" fill="#6b7280">0.2</text>
+<line x1="56" y1="227.2" x2="904" y2="227.2" stroke="#e5e7eb"/>
+<text x="48" y="231.2" text-anchor="end" font-family="sans-serif" font-size="11" fill="#6b7280">0.4</text>
+<line x1="56" y1="164.8" x2="904" y2="164.8" stroke="#e5e7eb"/>
+<text x="48" y="168.8" text-anchor="end" font-family="sans-serif" font-size="11" fill="#6b7280">0.6</text>
+<line x1="56" y1="102.4" x2="904" y2="102.4" stroke="#e5e7eb"/>
+<text x="48" y="106.4" text-anchor="end" font-family="sans-serif" font-size="11" fill="#6b7280">0.8</text>
+<line x1="56" y1="40.0" x2="904" y2="40.0" stroke="#e5e7eb"/>
+<text x="48" y="44.0" text-anchor="end" font-family="sans-serif" font-size="11" fill="#6b7280">1.0</text>
+<line x1="56" y1="40" x2="56" y2="352" stroke="#111827"/>
+<line x1="56" y1="352" x2="904" y2="352" stroke="#111827"/>
+<text x="162.0" y="388" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#374151">N@20</text>
+<rect x="86.7" y="193.3" width="74.3" height="158.7" fill="#6b7280"/>
+<rect x="163.0" y="177.0" width="74.3" height="175.0" fill="#1d4e89"/>
+<line x1="200.2" y1="176.0" x2="200.2" y2="177.9" stroke="#111827" stroke-width="1"/>
+<text x="374.0" y="388" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#374151">N@50</text>
+<rect x="298.7" y="186.0" width="74.3" height="166.0" fill="#6b7280"/>
+<rect x="375.0" y="169.8" width="74.3" height="182.2" fill="#1d4e89"/>
+<line x1="412.2" y1="169.0" x2="412.2" y2="170.7" stroke="#111827" stroke-width="1"/>
+<text x="586.0" y="388" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#374151">R@20</text>
+<rect x="510.7" y="135.8" width="74.3" height="216.2" fill="#6b7280"/>
+<rect x="587.0" y="118.2" width="74.3" height="233.8" fill="#1d4e89"/>
+<line x1="624.2" y1="117.4" x2="624.2" y2="119.0" stroke="#111827" stroke-width="1"/>
+<text x="798.0" y="388" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#374151">R@50</text>
+<rect x="722.7" y="107.6" width="74.3" height="244.4" fill="#6b7280"/>
+<rect x="799.0" y="91.4" width="74.3" height="260.6" fill="#1d4e89"/>
+<line x1="836.2" y1="90.3" x2="836.2" y2="92.5" stroke="#111827" stroke-width="1"/>
+<line x1="56" y1="189.4" x2="904" y2="189.4" stroke="#000000" stroke-width="2" stroke-dasharray="8 6" fill="none"/>
+<text x="900" y="183.4" text-anchor="end" font-family="sans-serif" font-size="11" fill="#000000">MLP base 0.521</text>
+<text x="16" y="196.0" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#374151" transform="rotate(-90 16 196.0)">test metric</text>
+<rect x="56" y="412" width="12" height="12" fill="#6b7280"/>
+<text x="72" y="422" font-family="sans-serif" font-size="12" fill="#374151">MLP</text>
+<rect x="116" y="412" width="12" height="12" fill="#1d4e89"/>
+<text x="132" y="422" font-family="sans-serif" font-size="12" fill="#374151">LightGCN K=1</text>
+</svg>

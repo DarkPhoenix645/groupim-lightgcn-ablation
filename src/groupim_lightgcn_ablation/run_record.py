@@ -112,6 +112,19 @@ MARKER_END = "<!-- launcher-runs:end -->"
 
 def rebuild_generated_catalog(catalog_path: Path, runs_root: Path) -> None:
     """Rewrite the generated section of the figure catalog from run directories."""
+    import fcntl
+
+    lock_path = runs_root.parent / "catalog.lock"
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
+    with lock_path.open("a+") as lock:
+        fcntl.flock(lock.fileno(), fcntl.LOCK_EX)
+        try:
+            _rebuild_generated_catalog(catalog_path, runs_root)
+        finally:
+            fcntl.flock(lock.fileno(), fcntl.LOCK_UN)
+
+
+def _rebuild_generated_catalog(catalog_path: Path, runs_root: Path) -> None:
     blocks = ["", "## Launcher runs", ""]
     index = [
         "| Figure | Run | Plotted | Y axis |",
